@@ -36,3 +36,8 @@ build
 *.class
 *.tokens
 *.interp
+**.so**
+**vcxproj**
+antlrcpp.xcodeproj
+antlr-ios
+.antlr
