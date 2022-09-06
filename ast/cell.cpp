@@ -27,6 +27,8 @@ void Cell::Set(std::string text) {
         } else {
             //  это формула - спарсить формулу
             Clear();
+            std::unique_ptr<FormulaInterface> formula = ParseFormula(text);
+            impl_.reset(formula);
         }
     } else if (text[0] == ESCAPE_SIGN) {
         text = text.substr(1);
@@ -54,7 +56,7 @@ public:
     virtual std::string Cell::GetText() const = 0;
 
 private:
-
+    std::variant<std::monostate, std::string, std::unique_ptr<FormulaInterface>> impl_;
 };
 
 class Cell::EmptyImpl : public Cell::Impl {
@@ -62,9 +64,9 @@ class Cell::EmptyImpl : public Cell::Impl {
 };
 
 class Cell::TextImpl : public Cell::Impl {
-    std::string text_;
+    
 };
 
 class Cell::FormulaImpl : public Cell::Impl {
-    FormulaInterface formula_;
+    
 };
