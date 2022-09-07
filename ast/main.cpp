@@ -8,11 +8,11 @@ inline std::ostream& operator<<(std::ostream& output, const CellInterface::Value
     return output;
 }
 
-// std::unique_ptr<CellInterface> CreateCell(const std::string& str) {
-//     std::unique_ptr<CellInterface> cell = std::make_unique<Cell>();
-//     cell->Set(str);
-//     return cell;
-// }
+std::unique_ptr<CellInterface> CreateCell(const std::string& str) {
+    std::unique_ptr<CellInterface> cell = std::make_unique<Cell>();
+    cell->Set(str);
+    return cell;
+}
 
 int main()
 {

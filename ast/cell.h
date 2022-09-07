@@ -3,22 +3,23 @@
 #include "common.h"
 #include "formula.h"
 
+
 class Cell : public CellInterface {
-public:
-    Cell();
-    ~Cell();
+    void Set(std::string text) override {
+        ; // заглушка
+    }
 
-    void Set(std::string text);
-    void Clear();
+    // Возвращает видимое значение ячейки.
+    // В случае текстовой ячейки это её текст (без экранирующих символов). В
+    // случае формулы - числовое значение формулы или сообщение об ошибке.
+    Value GetValue() const override {
+        return {};
+    }
 
-    Value GetValue() const override;
-    std::string GetText() const override;
-
-private:
-    class Impl;
-    class EmptyImpl;
-    class TextImpl;
-    class FormulaImpl;
-    std::unique_ptr<Impl> impl_ = nullptr;
+    // Возвращает внутренний текст ячейки, как если бы мы начали её
+    // редактирование. В случае текстовой ячейки это её текст (возможно,
+    // содержащий экранирующие символы). В случае формулы - её выражение.
+    std::string GetText() const override {
+        return {};
+    }
 };
-
