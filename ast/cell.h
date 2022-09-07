@@ -15,35 +15,57 @@ public:
 
 
     void Set(std::string text) override {
-        ; // заглушка
+        if(text.empty()) {
+            Clear();
+        }
+        if(text[0] == FORMULA_SIGN) {
+            if(text.size() == 1) {
+                // создать ячейку с одним символом =
+                impl_ = std::make_unique<TextImpl>("=");
+            } else {
+                //  это формула - спарсить формулу
+                std::unique_ptr<FormulaInterface> formula = ParseFormula(text.substr(1));
+                impl_ = std::make_unique<FormulaImpl>(std::move(formula));
+            }
+        } else if (text[0] == ESCAPE_SIGN) {
+            impl_ = std::make_unique<TextImpl>(std::move(text));
+        } else {
+            // это текст
+            impl_ = std::make_unique<TextImpl>(std::move(text));
+        }
     }
 
     // Возвращает видимое значение ячейки.
     // В случае текстовой ячейки это её текст (без экранирующих символов). В
     // случае формулы - числовое значение формулы или сообщение об ошибке.
     Value GetValue() const override {
-        return {};
+        return impl_.get()->GetValue();
     }
 
     // Возвращает внутренний текст ячейки, как если бы мы начали её
     // редактирование. В случае текстовой ячейки это её текст (возможно,
     // содержащий экранирующие символы). В случае формулы - её выражение.
     std::string GetText() const override {
-        return {};
+        return impl_.get()->GetText();
+    }
+
+    void Clear() {
+        impl_ = std::make_unique<EmptyImpl>();
     }
 
 private:
 
     class Impl {
+    public:
         virtual Value GetValue() const = 0;
-        virtual Value GetText() const = 0;
+        virtual std::string GetText() const = 0;
     };
 
     class EmptyImpl : public Impl {
         Value GetValue() const override {
             return {};
         }
-        Value GetText() const override {
+        std::string GetText() const override {
             return {};
         }
     };
@@ -54,9 +76,12 @@ private:
             : text_(text) {}
 
         Value GetValue() const override {
+            if(!text_.empty() && text_.at(0) == ESCAPE_SIGN) {
+                return text_.substr(1);
+            }
             return text_;
         }
-        Value GetText() const override {
+        std::string GetText() const override {
             return text_;
         }
 
@@ -75,11 +100,13 @@ private:
                 return std::get<double>(res);
             } else if (std::holds_alternative<FormulaError>(res)) {
                 return std::get<FormulaError>(res);
+            } else {
+                throw std::runtime_error("e");
             }
         }
 
-        Value GetText() const override {
-            std::string res = formula_.get()->GetExpression();
+        std::string GetText() const override {
+            std::string res = "=" + formula_.get()->GetExpression();
             return res;
         }
         
