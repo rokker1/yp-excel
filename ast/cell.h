@@ -5,6 +5,14 @@
 
 
 class Cell : public CellInterface {
+public:
+
+    Cell() 
+        : impl_(std::make_unique<EmptyImpl>())
+    {
+
+    }
+
     void Set(std::string text) override {
         ; // заглушка
     }
@@ -22,4 +30,22 @@ class Cell : public CellInterface {
     std::string GetText() const override {
         return {};
     }
+
+private:
+
+    class Impl {
+        virtual Value GetValue() const = 0;
+        virtual Value GetText() const = 0;
+    };
+
+    class EmptyImpl : public Impl {
+        Value GetValue() const override {
+            return {};
+        }
+        Value GetText() const override {
+            return {};
+        }
+    };
+
+    std::unique_ptr<Impl> impl_;
 };
