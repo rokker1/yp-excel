@@ -22,7 +22,7 @@ public:
 
     // Возвращает выражение, которое описывает формулу.
     // Не содержит пробелов и лишних скобок.
-    virtual std::string GetExpresstion() const = 0;
+    virtual std::string GetExpression() const = 0;
 };
 
 // Парсит переданное выражение и возвращает объект формулы.

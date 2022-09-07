@@ -19,5 +19,6 @@ private:
     class EmptyImpl;
     class TextImpl;
     class FormulaImpl;
-    std::unique_ptr<Impl> impl_;
+    std::unique_ptr<Impl> impl_ = nullptr;
 };
+
