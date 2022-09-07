@@ -13,6 +13,7 @@ public:
 
     }
 
+
     void Set(std::string text) override {
         ; // заглушка
     }
@@ -45,6 +46,45 @@ private:
         Value GetText() const override {
             return {};
         }
+    };
+
+    class TextImpl : public Impl {
+    public:
+        explicit TextImpl(std::string text)
+            : text_(text) {}
+
+        Value GetValue() const override {
+            return text_;
+        }
+        Value GetText() const override {
+            return text_;
+        }
+
+    private:
+        std::string text_;
+    };
+
+    class FormulaImpl : public Impl {
+    public:
+        explicit FormulaImpl(std::unique_ptr<FormulaInterface> formula)
+            : formula_(std::move(formula)) {}
+
+        Value GetValue() const override {
+            FormulaInterface::Value res = formula_.get()->Evaluate();
+            if (std::holds_alternative<double>(res)) {
+                return std::get<double>(res);
+            } else if (std::holds_alternative<FormulaError>(res)) {
+                return std::get<FormulaError>(res);
+            }
+        }
+
+        Value GetText() const override {
+            std::string res = formula_.get()->GetExpression();
+            return res;
+        }
+        
+    private:
+        std::unique_ptr<FormulaInterface> formula_;
     };
 
     std::unique_ptr<Impl> impl_;
