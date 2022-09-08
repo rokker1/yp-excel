@@ -33,7 +33,6 @@ antlr_target(FormulaParser Formula.g4 LEXER PARSER LISTENER)
 include_directories(
   ${ANTLR4_INCLUDE_DIRS}
   ${ANTLR_FormulaParser_OUTPUT_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/antlr4_runtime/runtime/src
   ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src
 )
 
