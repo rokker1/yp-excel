@@ -162,30 +162,34 @@ Size Sheet::GetPrintableSize() const {
 }
 
 void Sheet::PrintValues(std::ostream& output) const {
-    if(!sheet_.empty()) {
-        
-        for (size_t j = 0; j < max_y_; ++j) {
-            bool is_first_col = true;
-            for (size_t i = 0; i < sheet_.at(j).size(); ++i) {
-                if(!is_first_col) {
-                    output << '\t';
-                }
-                is_first_col = false;
-                if(auto cell = sheet_.at(j).at(i).get(); cell != nullptr) {
-                    auto value = cell->GetValue();
-                    std::visit(CellValuePrinter{output}, value);
-                } else {
-                    output << "";
-                }
-
-                if(max_x_ > sheet_.at(j).size()) {
-                    for(size_t i = (max_x_ - sheet_.at(j).size()); i < max_x_; ++i) {
-                        output << '\t';
-                    }
-                }
+    for(const auto& row : sheet_) {
+        bool is_first_col = true;
+        for(const auto& cell : row) {
+            if(!is_first_col) {
+                output << '\t';
             }
-            output << '\n';
+            is_first_col = false;
+
+            if(cell.get() != nullptr) {
+                output << cell->GetValue();
+            } else {
+                output << "";
+            }
         }
+
+        if(row.empty()) {
+            // выведи max_x_ - 1 табуляций
+            for (size_t i = 0; i + 1 < max_x_; ++i) {
+                output << '\t';
+            }
+        } else {
+            // выведи max_x_ - size() табуляций
+            for (size_t i = 0; i < (max_x_ - row.size()); ++i) {
+                output << '\t';
+            }
+        }
+
+        output << '\n';
     }
 }
 void Sheet::PrintTexts(std::ostream& output) const {
