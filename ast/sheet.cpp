@@ -40,9 +40,7 @@ void Sheet::SetCell(Position pos, std::string text) {
         }
     }
 
-    std::unique_ptr<CellInterface> cell = std::make_unique<Cell>();
-    cell.get()->Set(text);
-    
+    std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(text);
     sheet_[y][x] = std::move(cell);
 }
 

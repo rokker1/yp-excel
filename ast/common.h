@@ -69,6 +69,13 @@ public:
 using std::out_of_range::out_of_range;
 };
 
+// Исключение, выбрасываемое при попытке задать формулу, которая приводит к
+// циклической зависимости между ячейками
+class CircularDependencyException : public std::runtime_error {
+public:
+    using std::runtime_error::runtime_error;
+};
+
 // Исключение, выбрасываемое, если вставка строк/столбцов в таблицу приведёт к
 // ячейке с позицией больше максимально допустимой
 class TableTooBigException : public std::runtime_error {
@@ -94,7 +101,7 @@ virtual ~CellInterface() = default;
 // * Если текст начинается с символа "'" (апостроф), то при выводе значения
 // ячейки методом GetValue() он опускается. Можно использовать, если нужно
 // начать текст со знака "=", но чтобы он не интерпретировался как формула.
-virtual void Set(std::string text) = 0;
+// virtual void Set(std::string text) = 0;
 
 // Возвращает видимое значение ячейки.
 // В случае текстовой ячейки это её текст (без экранирующих символов). В

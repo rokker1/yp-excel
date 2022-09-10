@@ -13,8 +13,11 @@ public:
 
     }
 
+    Cell(std::string text) {
+        Set(text);
+    }
 
-    void Set(std::string text) override {
+    void Set(std::string text) {
         if(text.empty()) {
             Clear();
         }
