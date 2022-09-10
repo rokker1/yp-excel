@@ -7,13 +7,16 @@
 class Cell : public CellInterface {
 public:
 
-    Cell() 
-        : impl_(std::make_unique<EmptyImpl>())
+    Cell(const SheetInterface& sheet) 
+        : sheet_(sheet)
+        , impl_(std::make_unique<EmptyImpl>(sheet_))
     {
 
     }
 
-    Cell(std::string text) {
+    Cell(const SheetInterface& sheet, std::string text) 
+        : sheet_(sheet)
+    {
         Set(text);
     }
 
@@ -25,17 +28,17 @@ public:
         if(text[0] == FORMULA_SIGN) {
             if(text.size() == 1) {
                 // создать ячейку с одним символом =
-                impl_ = std::make_unique<TextImpl>("=");
+                impl_ = std::make_unique<TextImpl>(sheet_, "=");
             } else {
                 //  это формула - спарсить формулу
                 std::unique_ptr<FormulaInterface> formula = ParseFormula(text.substr(1));
-                impl_ = std::make_unique<FormulaImpl>(std::move(formula));
+                impl_ = std::make_unique<FormulaImpl>(sheet_, std::move(formula));
             }
         } else if (text[0] == ESCAPE_SIGN) {
-            impl_ = std::make_unique<TextImpl>(std::move(text));
+            impl_ = std::make_unique<TextImpl>(sheet_, std::move(text));
         } else {
             // это текст
-            impl_ = std::make_unique<TextImpl>(std::move(text));
+            impl_ = std::make_unique<TextImpl>(sheet_, std::move(text));
         }
     }
 
@@ -54,7 +57,7 @@ public:
     }
 
     void Clear() {
-        impl_ = std::make_unique<EmptyImpl>();
+        impl_ = std::make_unique<EmptyImpl>(sheet_);
     }
 
     std::vector<Position> GetReferencedCells() const {
@@ -62,15 +65,33 @@ public:
         return referenced_cells_;
     }
 
+    const SheetInterface& sheet_;
+
+    const SheetInterface& GetSheet() const {
+        return sheet_;
+    }
+
 private:
 
     class Impl {
     public:
+        Impl(const SheetInterface& sheet)
+            : sheet_(sheet) {}
+        
         virtual Value GetValue() const = 0;
         virtual std::string GetText() const = 0;
+        const SheetInterface& GetSheet() const {
+            return sheet_;
+        }
+    private:    
+        const SheetInterface& sheet_;
     };
 
     class EmptyImpl : public Impl {
+    public:
+        EmptyImpl(const SheetInterface& sheet)
+            : Impl(sheet) {}
+
         Value GetValue() const override {
             return {};
         }
@@ -81,8 +102,9 @@ private:
 
     class TextImpl : public Impl {
     public:
-        explicit TextImpl(std::string text)
-            : text_(text) {}
+        explicit TextImpl(const SheetInterface& sheet, std::string text)
+            : Impl(sheet)
+            , text_(text) {}
 
         Value GetValue() const override {
             if(!text_.empty() && text_.at(0) == ESCAPE_SIGN) {
@@ -100,11 +122,12 @@ private:
 
     class FormulaImpl : public Impl {
     public:
-        explicit FormulaImpl(std::unique_ptr<FormulaInterface> formula)
-            : formula_(std::move(formula)) {}
+        explicit FormulaImpl(const SheetInterface& sheet, std::unique_ptr<FormulaInterface> formula)
+            : Impl(sheet)
+            , formula_(std::move(formula)) {}
 
         Value GetValue() const override {
-            FormulaInterface::Value res = formula_.get()->Evaluate();
+            FormulaInterface::Value res = formula_.get()->Evaluate(GetSheet());
             if (std::holds_alternative<double>(res)) {
                 return std::get<double>(res);
             } else if (std::holds_alternative<FormulaError>(res)) {

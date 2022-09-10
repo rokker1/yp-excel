@@ -21,7 +21,8 @@ public:
             : ast_(ParseFormulaAST(expression))
     {}
 
-    Value Evaluate() const override {
+    Value Evaluate(const SheetInterface& sheet) const override {
+        // рекурсивный вызов Evaluate(sheet) для дочерних ячеек
         double result = 0.0;
         try {
             result = ast_.Execute();
@@ -40,7 +41,7 @@ public:
     std::vector<Position> GetReferencedCells() const override {
         return referenced_cells_;
     }
-    
+
 private:
     FormulaAST ast_;
     std::vector<Position> referenced_cells_;
