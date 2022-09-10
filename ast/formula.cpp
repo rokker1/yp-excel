@@ -36,8 +36,14 @@ public:
         ast_.PrintFormula(s);
         return s.str();
     }
+
+    std::vector<Position> GetReferencedCells() const override {
+        return referenced_cells_;
+    }
+    
 private:
     FormulaAST ast_;
+    std::vector<Position> referenced_cells_;
 };
 } // namespace
 
