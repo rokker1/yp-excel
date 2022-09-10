@@ -57,6 +57,11 @@ public:
         impl_ = std::make_unique<EmptyImpl>();
     }
 
+    std::vector<Position> GetReferencedCells() const {
+        // заглушка. реализовать позже
+        return referenced_cells_;
+    }
+
 private:
 
     class Impl {
@@ -119,4 +124,6 @@ private:
     };
 
     std::unique_ptr<Impl> impl_;
+
+    std::vector<Position> referenced_cells_;
 };
