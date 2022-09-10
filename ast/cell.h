@@ -18,6 +18,7 @@ public:
         if(text.empty()) {
             Clear();
         }
+        // добавляется возможность индексов ячеек
         if(text[0] == FORMULA_SIGN) {
             if(text.size() == 1) {
                 // создать ячейку с одним символом =

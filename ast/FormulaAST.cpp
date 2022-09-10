@@ -163,14 +163,14 @@ public:
             {
                 return result;
             } else {
-                throw FormulaError("DIV/0");
+                throw FormulaError(FormulaError::Category::Div0);
             }
             break;
             
         default:
             break;
         }
-        throw FormulaError("no result");
+        throw std::runtime_error("Unknown operation!");
     }
 
 private:
@@ -342,6 +342,8 @@ public:
 }  // namespace ASTImpl
 
 FormulaAST ParseFormulaAST(std::istream& in) {
+    // мы сохраним все встреченные индексы в отдельный список
+    // cells_
     using namespace antlr4;
 
     ANTLRInputStream input(in);

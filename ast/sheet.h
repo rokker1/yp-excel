@@ -48,7 +48,7 @@ private:
             return output << value;
         }
         std::ostream& operator()(FormulaError& error) {
-            return output << '#' << error.what() << '!';
+            return output << error.ToString();
         }
 
         std::ostream& output;
