@@ -255,6 +255,18 @@ private:
     double value_;
 };
 
+class CellExpr : public Expr {
+public:
+    explicit CellExpr(Position pos)
+        : pos_(pos) {}
+
+    double Evaluate() const override {
+        return 0.0;
+    }
+private:
+    Position pos_;
+};
+
 class ParseASTListener final : public FormulaBaseListener {
 public:
     std::unique_ptr<Expr> MoveRoot() {
