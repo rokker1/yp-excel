@@ -72,7 +72,7 @@ public:
     virtual ~Expr() = default;
     virtual void Print(std::ostream& out) const = 0;
     virtual void DoPrintFormula(std::ostream& out, ExprPrecedence precedence) const = 0;
-    virtual double Evaluate() const = 0;
+    virtual double Evaluate([[maybe_unused]] const SheetInterface& sheet) const = 0;
 
     // higher is tighter
     virtual ExprPrecedence GetPrecedence() const = 0;
@@ -144,21 +144,21 @@ public:
 
 // Реализуйте метод Evaluate() для бинарных операций.
 // При делении на 0 выбрасывайте ошибку вычисления FormulaError
-    double Evaluate() const override {
+    double Evaluate([[maybe_unused]] const SheetInterface& sheet) const override {
         double result;
         switch (type_)
         {
         case Add:
-            return lhs_.get()->Evaluate() + rhs_.get()->Evaluate();
+            return lhs_.get()->Evaluate(sheet) + rhs_.get()->Evaluate(sheet);
             break;
         case Subtract:
-            return lhs_.get()->Evaluate() - rhs_.get()->Evaluate();
+            return lhs_.get()->Evaluate(sheet) - rhs_.get()->Evaluate(sheet);
             break;
         case Multiply:
-            return lhs_.get()->Evaluate() * rhs_.get()->Evaluate();
+            return lhs_.get()->Evaluate(sheet) * rhs_.get()->Evaluate(sheet);
             break;
         case Divide:
-            result = lhs_.get()->Evaluate() / rhs_.get()->Evaluate();
+            result = lhs_.get()->Evaluate(sheet) / rhs_.get()->Evaluate(sheet);
             if (std::isfinite(result))
             {
                 return result;
@@ -208,14 +208,14 @@ public:
     }
 
 // Реализуйте метод Evaluate() для унарных операций.
-    double Evaluate() const override {
+    double Evaluate([[maybe_unused]] const SheetInterface& sheet) const override {
         switch (type_)
         {
         case UnaryPlus:
-            return operand_.get()->Evaluate();
+            return operand_.get()->Evaluate(sheet);
             break;
         case UnaryMinus:
-            return -(operand_.get()->Evaluate());
+            return -(operand_.get()->Evaluate(sheet));
         
         default:
             break;
@@ -247,7 +247,7 @@ public:
     }
 
 // Для чисел метод возвращает значение числа.
-    double Evaluate() const override {
+    double Evaluate([[maybe_unused]] const SheetInterface& sheet) const override {
         return value_;
     }
 
@@ -258,10 +258,18 @@ private:
 class CellExpr : public Expr {
 public:
     explicit CellExpr(Position pos)
-        : pos_(pos) {}
+        : pos_(pos) 
+    {}
 
-    double Evaluate() const override {
-        return 0.0;
+    double Evaluate([[maybe_unused]] const SheetInterface& sheet) const override {
+        CellInterface::Value value = sheet.GetCell(pos_)->GetValue();
+        if (std::holds_alternative<double>(value)) {
+            return std::get<double>(value);
+        } else if (std::holds_alternative<FormulaError>(value)) {
+            throw std::get<FormulaError>(value);
+        } else {
+            throw std::runtime_error("e");
+        }
     }
 private:
     Position pos_;
@@ -396,8 +404,8 @@ void FormulaAST::PrintFormula(std::ostream& out) const {
     root_expr_->PrintFormula(out, ASTImpl::EP_ATOM);
 }
 
-double FormulaAST::Execute() const {
-    return root_expr_->Evaluate();
+double FormulaAST::Execute(const SheetInterface& sheet) const {
+    return root_expr_->Evaluate(sheet);
 }
 
 FormulaAST::FormulaAST(std::unique_ptr<ASTImpl::Expr> root_expr)

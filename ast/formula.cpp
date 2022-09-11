@@ -25,7 +25,7 @@ public:
         // рекурсивный вызов Evaluate(sheet) для дочерних ячеек
         double result = 0.0;
         try {
-            result = ast_.Execute();
+            result = ast_.Execute(sheet);
         } catch (FormulaError& e) {
             return e;
         }
