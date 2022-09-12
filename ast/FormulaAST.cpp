@@ -413,3 +413,7 @@ FormulaAST::FormulaAST(std::unique_ptr<ASTImpl::Expr> root_expr)
 }
 
 FormulaAST::~FormulaAST() = default;
+
+const std::forward_list<Position>& FormulaAST::GetAllReferencedCells() const {
+    return cells_;
+}

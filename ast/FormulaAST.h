@@ -25,10 +25,13 @@ public:
     double Execute(const SheetInterface& sheet) const;
     void Print(std::ostream& out) const;
     void PrintFormula(std::ostream& out) const;
+ 
+    const std::forward_list<Position>& GetAllReferencedCells() const;
 
 private:
     std::unique_ptr<ASTImpl::Expr> root_expr_;
-    //  все встреченные индексы ячеек в отдельный список
+    // При парсинге формулы в методе ParseFormulaAST 
+    // мы сохраним все встреченные индексы ячеек в отдельный список. 
     std::forward_list<Position> cells_;
 };
 

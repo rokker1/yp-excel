@@ -83,6 +83,9 @@ private:
         const SheetInterface& GetSheet() const {
             return sheet_;
         }
+
+        // virtual const std::set<Position> GetReferencedCells() const = 0;
+
     private:    
         const SheetInterface& sheet_;
     };
@@ -98,6 +101,9 @@ private:
         std::string GetText() const override {
             return {};
         }
+        // const std::set<Position> GetReferencedCells() const override {
+        //     return {};
+        // }
     };
 
     class TextImpl : public Impl {
@@ -124,7 +130,9 @@ private:
     public:
         explicit FormulaImpl(const SheetInterface& sheet, std::unique_ptr<FormulaInterface> formula)
             : Impl(sheet)
-            , formula_(std::move(formula)) {}
+            , formula_(std::move(formula))
+            // , referenced_cells_(formula_.get()->GetReferencedCells())
+        {}
 
         Value GetValue() const override {
             FormulaInterface::Value res = formula_.get()->Evaluate(GetSheet());
@@ -141,9 +149,12 @@ private:
             std::string res = "=" + formula_.get()->GetExpression();
             return res;
         }
+
+
         
     private:
         std::unique_ptr<FormulaInterface> formula_;
+        std::set<Position> referenced_cells_;
     };
 
     std::unique_ptr<Impl> impl_;
