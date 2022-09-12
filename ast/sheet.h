@@ -36,6 +36,11 @@ private:
     size_t max_x_ = 0;
     // максимальный размер таблицы по строкам
     size_t max_y_ = 0;
+
+    // граф
+    // http://shujkova.ru/sites/default/files/algorithm2.pdf
+    // https://habr.com/ru/post/504374/
+    
     
     struct CellValuePrinter {
         CellValuePrinter(std::ostream& output)
