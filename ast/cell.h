@@ -32,6 +32,7 @@ public:
             } else {
                 //  это формула - спарсить формулу
                 std::unique_ptr<FormulaInterface> formula = ParseFormula(text.substr(1));
+                formula->GetReferencedCells();
                 impl_ = std::make_unique<FormulaImpl>(sheet_, std::move(formula));
             }
         } else if (text[0] == ESCAPE_SIGN) {
