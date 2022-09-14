@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2022-09-14T06:39:47.046Z" agent="5.0 (X11)" etag="arqwBqLHE7LS7gqC5Jp1" version="20.3.0" type="github">
+<mxfile host="app.diagrams.net" modified="2022-09-14T12:18:00.646Z" agent="5.0 (X11)" etag="95eKriBPpeU_Zy6fkJtB" version="20.3.0" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
-    <mxGraphModel dx="368" dy="431" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1243" dy="625" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -62,6 +62,9 @@
         </mxCell>
         <mxCell id="HDM0dJcOVp-7IW_OqraS-9" value="Инвалидировать кэш данной ячеки (флаг валидности = ложь). " style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="160" y="470" width="100" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-19" value="Инвалидация кеша вышестоящих ячеек" style="swimlane;startSize=23;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="320" y="90" width="450" height="620" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
