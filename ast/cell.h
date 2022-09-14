@@ -2,7 +2,7 @@
 
 #include "common.h"
 #include "formula.h"
-
+#include <optional>
 
 class Cell : public CellInterface {
 public:
@@ -42,6 +42,11 @@ public:
             impl_ = std::make_unique<TextImpl>(sheet_, std::move(text));
         }
     }
+
+    static void InvalidateCache(Cell* cell);
+    void dfs(const CellInterface& cell); // deep-first search
+    bool CheckDependentCycles() const;
+    bool CheckReferencedCycles() const;
 
     // Возвращает видимое значение ячейки.
     // В случае текстовой ячейки это её текст (без экранирующих символов). В
@@ -89,6 +94,8 @@ private:
 
     private:    
         const SheetInterface& sheet_;
+
+        std::optional<double> cached_value_;
     };
 
     class EmptyImpl : public Impl {
@@ -161,4 +168,5 @@ private:
     std::unique_ptr<Impl> impl_;
 
     std::vector<Position> referenced_cells_;
+    std::vector<Position> dependent_cells_;
 };
