@@ -1,70 +1,99 @@
-<mxfile host="app.diagrams.net" modified="2022-09-14T12:18:00.646Z" agent="5.0 (X11)" etag="95eKriBPpeU_Zy6fkJtB" version="20.3.0" type="github">
+<mxfile host="app.diagrams.net" modified="2022-09-14T14:59:46.476Z" agent="5.0 (X11)" etag="pNT-Qy41X-l3inhZTraN" version="20.3.0" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
-    <mxGraphModel dx="1243" dy="625" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1586" dy="933" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-0" value="&lt;div&gt;&lt;span class=&quot;element-hint glossary-term&quot;&gt;&lt;span class=&quot;element-hint__wrapper&quot;&gt;Инвалидация кэша&lt;/span&gt;&lt;/span&gt; и его оптимизация с проходом по ячейкам только один раз&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="14" y="10" width="576" height="30" as="geometry" />
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-0" value="&lt;div&gt;&lt;span class=&quot;element-hint glossary-term&quot;&gt;&lt;span class=&quot;element-hint__wrapper&quot;&gt;Инвалидация кэша&lt;/span&gt;&lt;/span&gt; и его оптимизация с проходом по ячейкам только один раз&lt;/div&gt;&lt;div&gt;Строится второй граф, где в каждой ячейке хранится массив указателей на ячейки, которые зависят от данной ячейки. Каждый раз при изменении данной ячейки все вышестоящие по графу инвалидируют кеш.&lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="124" y="60" width="576" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-1" target="HDM0dJcOVp-7IW_OqraS-2">
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-1" target="HDM0dJcOVp-7IW_OqraS-2" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-1" value="start" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_1;whiteSpace=wrap;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="80" y="50" width="100" height="60" as="geometry" />
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-1" value="start" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="90" y="100" width="100" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-2" target="HDM0dJcOVp-7IW_OqraS-4">
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-2" target="HDM0dJcOVp-7IW_OqraS-4" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-2" value="Пользователь изменяет значение ячейки или впервые создает" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="60" y="140" width="140" height="70" as="geometry" />
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-2" value="Пользователь изменяет значение ячейки или впервые создает" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="70" y="190" width="140" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-4" target="HDM0dJcOVp-7IW_OqraS-6">
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-4" target="HDM0dJcOVp-7IW_OqraS-6" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-4" value="Происходит обход дерева формулы, вычисление. в процессе вычисления закешироать значения в нижестоящих по графу зависимостей ячейках." style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="10" y="240" width="240" height="70" as="geometry" />
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-4" value="Происходит обход дерева формулы, вычисление. в процессе вычисления закешироать значения в нижестоящих по графу зависимостей ячейках." style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="20" y="290" width="240" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-6" target="HDM0dJcOVp-7IW_OqraS-7">
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-6" target="HDM0dJcOVp-7IW_OqraS-7" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-15" value="да" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="HDM0dJcOVp-7IW_OqraS-13">
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-15" value="да" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="HDM0dJcOVp-7IW_OqraS-13" vertex="1" connectable="0">
           <mxGeometry x="0.1658" y="1" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.801;entryY=-0.005;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-6" target="HDM0dJcOVp-7IW_OqraS-9">
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.801;entryY=-0.005;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-6" target="HDM0dJcOVp-7IW_OqraS-9" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="240" y="395" />
+              <mxPoint x="250" y="445" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-16" value="нет" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="HDM0dJcOVp-7IW_OqraS-14">
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-16" value="нет" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="HDM0dJcOVp-7IW_OqraS-14" vertex="1" connectable="0">
           <mxGeometry x="0.0679" y="-1" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-6" value="Вычисление формулы вернуло значение типа double?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="65" y="340" width="130" height="110" as="geometry" />
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-6" value="Вычисление формулы вернуло значение типа double?" style="rhombus;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="75" y="390" width="130" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.469;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-7" target="HDM0dJcOVp-7IW_OqraS-8">
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.469;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-7" target="HDM0dJcOVp-7IW_OqraS-8" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-7" value="Записать значение в кэш данной ячеки; Флаг валидности кэша = истина." style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="14" y="470" width="100" height="100" as="geometry" />
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-7" value="Записать значение в кэш данной ячеки; Флаг валидности кэша = истина." style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="24" y="520" width="100" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-8" value="Запустить инвалидацию кеша всех вышестоящих ячеек по графу зависимостей" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="80" y="620" width="120" height="120" as="geometry" />
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-8" value="Запустить инвалидацию кеша всех вышестоящих ячеек по графу зависимостей" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="90" y="670" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.583;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-9" target="HDM0dJcOVp-7IW_OqraS-8">
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.583;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="HDM0dJcOVp-7IW_OqraS-9" target="HDM0dJcOVp-7IW_OqraS-8" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-9" value="Инвалидировать кэш данной ячеки (флаг валидности = ложь). " style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="160" y="470" width="100" height="100" as="geometry" />
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-9" value="Инвалидировать кэш данной ячеки (флаг валидности = ложь). " style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="170" y="520" width="100" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="HDM0dJcOVp-7IW_OqraS-19" value="Инвалидация кеша вышестоящих ячеек" style="swimlane;startSize=23;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="320" y="90" width="450" height="620" as="geometry" />
+        <mxCell id="HDM0dJcOVp-7IW_OqraS-19" value="Инвалидация кеша вышестоящих ячеек" style="swimlane;startSize=23;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="330" y="140" width="450" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="hVmq0Ce3AXl6112dpqyB-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="HDM0dJcOVp-7IW_OqraS-19" source="hVmq0Ce3AXl6112dpqyB-0" target="hVmq0Ce3AXl6112dpqyB-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hVmq0Ce3AXl6112dpqyB-0" value="Для каждой вышестоящей ячейки в графе зависимостей" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.loop_limit;whiteSpace=wrap;" vertex="1" parent="HDM0dJcOVp-7IW_OqraS-19">
+          <mxGeometry x="50" y="100" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="hVmq0Ce3AXl6112dpqyB-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="HDM0dJcOVp-7IW_OqraS-19" source="hVmq0Ce3AXl6112dpqyB-1" target="hVmq0Ce3AXl6112dpqyB-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hVmq0Ce3AXl6112dpqyB-3" value="нет" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="hVmq0Ce3AXl6112dpqyB-2">
+          <mxGeometry x="-0.0216" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hVmq0Ce3AXl6112dpqyB-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="HDM0dJcOVp-7IW_OqraS-19" source="hVmq0Ce3AXl6112dpqyB-1" target="hVmq0Ce3AXl6112dpqyB-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hVmq0Ce3AXl6112dpqyB-1" value="флаг валидности кеша ячейки == истина?" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.decision;whiteSpace=wrap;" vertex="1" parent="HDM0dJcOVp-7IW_OqraS-19">
+          <mxGeometry x="35" y="185" width="170" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="hVmq0Ce3AXl6112dpqyB-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="HDM0dJcOVp-7IW_OqraS-19" source="hVmq0Ce3AXl6112dpqyB-5" target="hVmq0Ce3AXl6112dpqyB-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hVmq0Ce3AXl6112dpqyB-5" value="флаг валидности = ложь;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="HDM0dJcOVp-7IW_OqraS-19">
+          <mxGeometry x="30" y="340" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hVmq0Ce3AXl6112dpqyB-6" value="Запустить инвалидацию кеша всех вышестоящих ячеек по графу зависимостей" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="HDM0dJcOVp-7IW_OqraS-19">
+          <mxGeometry x="60" y="425" width="120" height="120" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
