@@ -1,1 +1,75 @@
-<mxfile host="app.diagrams.net" modified="2022-09-14T03:53:27.149Z" agent="5.0 (X11)" version="20.3.0" etag="2E0K4IQhDD-8oaTpTZVs" type="github"><diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">7VhZc9MwEP41Hp5gfBQnecRp0wKhU2ihw6NiK7aI7DWynINfzyqWYzsOOYD0yDQv0a43K2m/b4/YcPrx/FKQNPoEAeWGbQZzwzk3bNuybQe/lGZRaLq9bqEIBQu0UaW4Zb+oVppam7OAZg1DCcAlS5tKH5KE+rKhI0LArGk2Bt7cNSUhbSlufcLb2nsWyEjfwu5U+ivKwqjc2XJ7xZOYlMb6JllEApjVVM6F4fQFgCxW8bxPuQpeGZf794t7Ppy4lx8+Zz/JV+/j3fW314WzwSE/WV1B0ET+X9d24XpKeK7jpe8qF2UABeRJQJUT03C8SMYclxYuf1ApFxpwkktAFQgZQQgJ4UOAVNuNIZHazFIyTYJ3CliURxz8SaEaMM71Hihp+y5KmRQwWWGnHKyAUMacjCj3iD8JlwftAweBjxJIqHIVIBn0XarDXVRab8/YagwyyIVPt9jpbJFEhHSbP7ewU+er8VQjd0khplIs0EBQTiSbNslMdE6EK7sKd1xo6A+ggdOiwZDEqcp6oFnySuJqBmKyhRsKl1nEJL1NyTJAMywnTb7UeYBX9UJOskyjuAPkw0CaUiHpfGtYy6euzu2yuGlxVlUKq0z/qFYlzswjAXHWAuI7Fs+XlPyXlHT3TMmyY+3MSU2Wkhh7p6j2dAMskTUTGI8zPNg6dVYb/j2b3rbYdA0tMu3G41nT7ZHI1DmMS9aT55L7hxbhcgyDNxK4CtUq5XkYIlnQXWI4g3btiiAe5dnudtHAWDFoQGLGVbyuKJ9SyXyyoakQzkLc99xHuKnYTB7ckiUhSm4l3S3JivX3iM2m02w2K7nebcwN3aZ7rG7TaWF6g+gV0NkmX+J7Yh3fsddA6D12y+/uU6SfdQl+8I5fVtPdLd/as0xr9phvHPw0CPT0p4DeXjPlyxhwHIbZpzYIlCes8cnL+ag9CYxykSwHAcjlyySwbRKwNzWhB50EykJYA/ULTQlDMM3hKc4B6//8z5zHngPKStGEgKuY2maRYSeGwfos5ljHwwDF6k1tUQqr993OxW8=</diagram></mxfile>
+<mxfile host="app.diagrams.net" modified="2022-09-14T04:33:15.074Z" agent="5.0 (X11)" etag="6RHeDxPNfiQ4WBJzutnW" version="20.3.0" type="github">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+    <mxGraphModel dx="322" dy="357" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="09orgE2SWlOHvSFSDCVv-1" value="Поиск циклических зависимостей с оптимизацией, обеспечивающей проход по каждой ячейке только один раз" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="10" y="10" width="560" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="09orgE2SWlOHvSFSDCVv-3" target="09orgE2SWlOHvSFSDCVv-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-3" value="start" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_1;whiteSpace=wrap;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="90" y="60" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="09orgE2SWlOHvSFSDCVv-4" target="09orgE2SWlOHvSFSDCVv-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-4" value="has_cycle = false;" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="45" y="130" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="09orgE2SWlOHvSFSDCVv-6" target="09orgE2SWlOHvSFSDCVv-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-6" value="цикл по списку referenced_cells&lt;br&gt;for (auto cell : ref_cells) :" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.loop_limit;whiteSpace=wrap;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="37.5" y="340" width="195" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.481;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="09orgE2SWlOHvSFSDCVv-7" target="09orgE2SWlOHvSFSDCVv-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-7" value="Получить список всех ячеек, на которе непосредственно ссылается ячейка" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="30" y="160" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="09orgE2SWlOHvSFSDCVv-8" target="09orgE2SWlOHvSFSDCVv-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-13" value="да" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="09orgE2SWlOHvSFSDCVv-12">
+          <mxGeometry x="0.2267" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-8" value="color = 0?" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.decision;whiteSpace=wrap;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="85" y="420" width="100" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="09orgE2SWlOHvSFSDCVv-9" target="09orgE2SWlOHvSFSDCVv-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-9" value="создать словарь &quot;цветов&quot; ячеек. color = map&amp;lt;Position, int&amp;gt;. размер = количество уникальных ячеек на которые ссылается данная ячейка. при обходе используем три цвета вершин: 0 - не посещенная, 1 - в процессе обработки, 2 - обработанная вершина." style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry y="220" width="270" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-11" value="Выполнить поиск в глубину этой вершины dfs(cell)" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="230" y="440" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-18" value="dfs(start)" style="swimlane;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="380" y="90" width="474" height="770" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.482;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="09orgE2SWlOHvSFSDCVv-18" source="09orgE2SWlOHvSFSDCVv-23" target="09orgE2SWlOHvSFSDCVv-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-23" value="color[start] = 1; // ячейка в процессе обработки" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="09orgE2SWlOHvSFSDCVv-18">
+          <mxGeometry x="10" y="30" width="390" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-24" value="цикл по списку referenced_cells&lt;br&gt;&lt;div&gt;текущей ячейки &lt;br&gt;&lt;/div&gt;&lt;div&gt;for (auto inner_cell : start.GetReferencedCells()) {&lt;br&gt;&lt;/div&gt;" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.loop_limit;whiteSpace=wrap;" vertex="1" parent="09orgE2SWlOHvSFSDCVv-18">
+          <mxGeometry x="70" y="70" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-26" value="color[start] = 2; // ячейка обрабтоана" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="09orgE2SWlOHvSFSDCVv-18">
+          <mxGeometry x="70" y="250" width="250" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="09orgE2SWlOHvSFSDCVv-19" value="deep-first search" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="500" y="70" width="120" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
