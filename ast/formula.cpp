@@ -38,12 +38,15 @@ public:
         return s.str();
     }
 
-    std::vector<Position> GetReferencedCells() override {
+    std::vector<Position> GetReferencedCells() const override {
         [[maybe_unused]] const std::forward_list<Position>& fl =
                                                          ast_.GetCells();
         
-        referenced_cells_ = std::move(std::vector<Position>{fl.begin(), fl.end()});
-        return referenced_cells_;
+        // referenced_cells_ = std::move(std::vector<Position>{fl.begin(), fl.end()});
+        // return referenced_cells_;
+
+        // что тут надо делать?
+        return {};
     }
 
 private:
