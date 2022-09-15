@@ -40,7 +40,7 @@ public:
 
     std::vector<Position> GetReferencedCells() override {
         [[maybe_unused]] const std::forward_list<Position>& fl =
-                                                         ast_.GetAllReferencedCells();
+                                                         ast_.GetCells();
         
         referenced_cells_ = std::move(std::vector<Position>{fl.begin(), fl.end()});
         return referenced_cells_;

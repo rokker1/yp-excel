@@ -17,21 +17,31 @@ class ParsingError : public std::runtime_error {
 
 class FormulaAST {
 public:
-    explicit FormulaAST(std::unique_ptr<ASTImpl::Expr> root_expr);
+    explicit FormulaAST(std::unique_ptr<ASTImpl::Expr> root_expr,
+                        std::forward_list<Position> cells);
     FormulaAST(FormulaAST&&) = default;
     FormulaAST& operator=(FormulaAST&&) = default;
     ~FormulaAST();
 
     double Execute(const SheetInterface& sheet) const;
+    void PrintCells(std::ostream& out) const;
     void Print(std::ostream& out) const;
     void PrintFormula(std::ostream& out) const;
- 
-    const std::forward_list<Position>& GetAllReferencedCells() const;
+
+    std::forward_list<Position>& GetCells() {
+        return cells_;
+    }
+
+    const std::forward_list<Position>& GetCells() const {
+        return cells_;
+    }
 
 private:
     std::unique_ptr<ASTImpl::Expr> root_expr_;
-    // При парсинге формулы в методе ParseFormulaAST 
-    // мы сохраним все встреченные индексы ячеек в отдельный список. 
+
+    // physically stores cells so that they can be
+    // efficiently traversed without going through
+    // the whole AST
     std::forward_list<Position> cells_;
 };
 
