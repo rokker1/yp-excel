@@ -26,6 +26,14 @@ struct Position {
     static const Position NONE;
 };
 
+struct PositionHasher
+{
+    size_t operator()(const Position p) {
+        return p.row * 16877 + p.col;
+    }
+};
+
+
 struct Size {
     int rows = 0;
     int cols = 0;
