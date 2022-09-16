@@ -248,7 +248,13 @@ public:
     }
 
     double Evaluate(const SheetInterface& sheet) const override {
-        CellInterface::Value value = sheet.GetCell(*cell_)->GetValue();
+        const CellInterface* cell = sheet.GetCell(*cell_);
+        // если мы получим nullptr - ячейки нет в таблице или она пустая, вернем ноль
+        if(!cell) {
+            return  0.0;
+        }
+        CellInterface::Value value = cell->GetValue();
+
         if (std::holds_alternative<double>(value)) {
             return std::get<double>(value);
         } else if (std::holds_alternative<FormulaError>(value)) {

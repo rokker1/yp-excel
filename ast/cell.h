@@ -58,7 +58,7 @@ public:
         : Impl(sheet) {}
 
     Value GetValue() const override {
-        return {};
+        return 0.0;
     }
     std::string GetText() const override {
         return {};

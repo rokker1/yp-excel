@@ -20,6 +20,7 @@ Cell::~Cell() = default;
 void Cell::Set(std::string text) {
     if(text.empty()) {
         Clear();
+        return;
     }
     // добавляется возможность индексов ячеек
     if(text[0] == FORMULA_SIGN) {
@@ -35,9 +36,26 @@ void Cell::Set(std::string text) {
     } else if (text[0] == ESCAPE_SIGN) {
         impl_ = std::make_unique<TextImpl>(sheet_, std::move(text));
     } else {
-        // это текст
-        impl_ = std::make_unique<TextImpl>(sheet_, std::move(text));
-    }    
+        // это текст или число!
+        double number = 0.0;
+        size_t processed = 0;
+        try {
+            number = std::stod(text, &processed);
+        } catch (const std::invalid_argument& e) {
+            impl_ = std::make_unique<TextImpl>(sheet_, std::move(text));
+            return;
+        } catch (const std::out_of_range& e) {
+            throw;
+        }
+
+        if(text.substr(processed).empty()) {
+            // текст ячейки состоял только из цифр и они все прочитаны, текста в ячейке не осталось
+            impl_ = std::make_unique<FormulaImpl>(sheet_, ParseFormula(std::move(text)));
+        } else {
+            // после цифр что-то было
+            impl_ = std::make_unique<TextImpl>(sheet_, std::move(text));
+        }
+    }
 }
 
     void Cell::Clear() {
