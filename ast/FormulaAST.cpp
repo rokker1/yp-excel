@@ -446,8 +446,12 @@ FormulaAST ParseFormulaAST(std::istream& in) {
 }
 
 FormulaAST ParseFormulaAST(const std::string& in_str) {
-    std::istringstream in(in_str);
-    return ParseFormulaAST(in);
+    try {
+        std::istringstream in(in_str);
+        return ParseFormulaAST(in);
+    } catch (...) {
+        throw FormulaException("bad formula");
+    }
 }
 
 void FormulaAST::PrintCells(std::ostream& out) const {
