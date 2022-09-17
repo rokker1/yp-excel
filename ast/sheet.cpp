@@ -41,6 +41,18 @@ void Sheet::SetCell(Position pos, std::string text) {
     }
 
     std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(*this, text);
+
+    // записать себя в список зависимых ячеек для всех ячеек,
+    // которые указаны в моем перечне  referenced_cells_
+
+    for(Position referenced_cell : cell->GetReferencedCells()) {
+        if(GetCell(referenced_cell) == nullptr) {
+            // мы ссылаемся на пустую ячейку - создадим ее пустым текстом
+            SetCell(referenced_cell, "");
+        }
+        AddDependentCell(referenced_cell, Position{static_cast<int>(y), static_cast<int>(x)});
+    }
+
     sheet_[y][x] = std::move(cell);
 }
 
@@ -50,7 +62,7 @@ const CellInterface* Sheet::GetCell(Position pos) const {
     }
     const size_t y = pos.row;
     const size_t x = pos.col;
-
+    // поменять логику на возвращение пустой ячейки
     if(y >= sheet_.size()) {
         return nullptr;
     }
@@ -74,6 +86,7 @@ CellInterface* Sheet::GetCell(Position pos) {
         return sheet_.at(y).at(x).get();
     }
     if(x >= sheet_.at(y).size()) {
+
         SetCell(pos, "");
         sheet_.at(y).at(x) = nullptr;
         return sheet_.at(y).at(x).get();
@@ -83,6 +96,11 @@ CellInterface* Sheet::GetCell(Position pos) {
 }
 
 void Sheet::ClearCell(Position pos) {
+    /*
+     * теперь нельзя просто взять и сделать ресайз
+     * если ячейка имеет зависимые ячейки, то
+     * будет меняться только размер печатной области
+     */
     if(!pos.IsValid()) {
         throw InvalidPositionException("invalid position!");
     };
@@ -148,11 +166,8 @@ void Sheet::ClearCell(Position pos) {
             max_x_ = new_max_x;
         }
     } else {
-        sheet_.at(y).at(x) = nullptr;
+        sheet_.at(y).at(x) = nullptr; // wrong
     }
-
-
-
 }
 
 Size Sheet::GetPrintableSize() const {
@@ -226,4 +241,17 @@ void Sheet::PrintTexts(std::ostream& output) const {
 
 std::unique_ptr<SheetInterface> CreateSheet() {
     return std::make_unique<Sheet>();
+}
+
+void Sheet::AddDependentCell(Position referenced_cell, Position dependent_cell) {
+    CellInterface* ref_cell = GetCell(referenced_cell);
+    if(!ref_cell) {
+        SetCell(referenced_cell, "");
+    }
+    Cell* c = dynamic_cast<Cell*>(ref_cell);
+    if(c) {
+        c->AddDependentCell(dependent_cell);
+    } else {
+        throw std::runtime_error("wtf");
+    }
 }

@@ -250,8 +250,8 @@ void TestErrorDiv0() {
 
 void TestEmptyCellTreatedAsZero() {
     auto sheet = CreateSheet();
-    sheet->SetCell("A1"_pos, "=B2");
-    ASSERT_EQUAL(sheet->GetCell("A1"_pos)->GetValue(), CellInterface::Value(0.0));
+   sheet->SetCell("A1"_pos, "=B2");
+   ASSERT_EQUAL(sheet->GetCell("A1"_pos)->GetValue(), CellInterface::Value(0.0));
 }
 
 void TestFormulaInvalidPosition() {

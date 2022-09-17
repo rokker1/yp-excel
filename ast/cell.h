@@ -24,6 +24,9 @@ public:
 
     bool IsReferenced() const;
 
+    void AddDependentCell(Position dependent_cell);
+    virtual std::set<Position> GetDependentCells() const;
+
 private:
 
     class Impl {
@@ -36,10 +39,19 @@ private:
         SheetInterface& GetSheet() const {
             return sheet_;
         }
-        // virtual const std::set<Position> GetReferencedCells() const = 0;
+        virtual const std::vector<Position> GetReferencedCells() const = 0;
+
+        void AddDependentCell(Position dependent_cell) {
+            dependent_cells_.insert(dependent_cell);
+        }
+        std::set<Position> GetDependentCells() const {
+            return dependent_cells_;
+        }
+
     protected:    
         SheetInterface& sheet_;
         std::optional<double> cached_value_;
+        std::set<Position> dependent_cells_;
     };
     class EmptyImpl;
     class TextImpl;
@@ -48,8 +60,7 @@ private:
     std::unique_ptr<Impl> impl_;
     // Добавьте поля и методы для связи с таблицей, проверки циклических 
     // зависимостей, графа зависимостей и т. д.
-    std::unordered_set<Position, PositionHasher> referenced_cells_;
-    std::unordered_set<Position, PositionHasher> dependent_cells_;
+
 };
 
 class Cell::EmptyImpl : public Impl {
@@ -61,6 +72,9 @@ public:
         return 0.0;
     }
     std::string GetText() const override {
+        return {};
+    }
+    virtual const std::vector<Position> GetReferencedCells() const override {
         return {};
     }
 };
@@ -79,6 +93,9 @@ public:
     }
     std::string GetText() const override {
         return text_;
+    }
+    virtual const std::vector<Position> GetReferencedCells() const override {
+        return {};
     }
 
 private:
@@ -109,10 +126,18 @@ public:
         std::string res = "=" + formula_.get()->GetExpression();
         return res;
     }
+    virtual const std::vector<Position> GetReferencedCells() const override {
+        return formula_->GetReferencedCells();
+    }
 
-
-    
+//    virtual void AddDependentCell(Position dependent_cell) override {
+//        dependent_cells_.insert(dependent_cell);
+//    }
+//    std::set<Position> GetDependentCells() const {
+//        return dependent_cells_;
+//    }
 private:
     std::unique_ptr<FormulaInterface> formula_;
-    std::set<Position> referenced_cells_;
+    // список ячеек, которые ссылкаются на данную ячейку
+
 };

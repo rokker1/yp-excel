@@ -36,7 +36,7 @@ void Cell::Set(std::string text) {
                 throw FormulaException("bad formula");
             }
 
-//            formula->GetReferencedCells();
+//          formula->GetReferencedCells();
             impl_ = std::make_unique<FormulaImpl>(sheet_, std::move(formula));
         }
     } else if (text[0] == ESCAPE_SIGN) {
@@ -80,7 +80,14 @@ void Cell::Set(std::string text) {
     }
 
     std::vector<Position> Cell::GetReferencedCells() const {
-        return std::vector<Position>{referenced_cells_.begin(), referenced_cells_.end()};
+        return impl_->GetReferencedCells();
+    }
+
+    void Cell::AddDependentCell(Position dependent_cell) {
+        impl_->AddDependentCell(dependent_cell);
+    }
+    std::set<Position> Cell::GetDependentCells() const {
+        return impl_->GetDependentCells();
     }
     // class Cell::Impl {
     // public:
