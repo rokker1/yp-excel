@@ -29,8 +29,14 @@ void Cell::Set(std::string text) {
             impl_ = std::make_unique<TextImpl>(sheet_, "=");
         } else {
             //  это формула - спарсить формулу
-            std::unique_ptr<FormulaInterface> formula = ParseFormula(text.substr(1));
-            formula->GetReferencedCells();
+            std::unique_ptr<FormulaInterface> formula;
+            try {
+                formula = ParseFormula(text.substr(1));
+            } catch (...) {
+                throw FormulaException("bad formula");
+            }
+
+//            formula->GetReferencedCells();
             impl_ = std::make_unique<FormulaImpl>(sheet_, std::move(formula));
         }
     } else if (text[0] == ESCAPE_SIGN) {
