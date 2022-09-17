@@ -19,7 +19,14 @@ public:
     // Реализуйте следующие методы:
     explicit Formula(std::string expression) 
             : ast_(ParseFormulaAST(expression))
-    {}
+            , referenced_cells_(ast_.GetCells().begin(), ast_.GetCells().end())
+    {
+        auto last = std::unique(referenced_cells_.begin(), referenced_cells_.end());
+        referenced_cells_.erase(last, referenced_cells_.end());
+//        std::sort(referenced_cells_.begin(), referenced_cells_.end());
+//        last = std::unique(referenced_cells_.begin(), referenced_cells_.end());
+//        referenced_cells_.erase(last, referenced_cells_.end());
+    }
 
     Value Evaluate(const SheetInterface& sheet) const override {
         // рекурсивный вызов Evaluate(sheet) для дочерних ячеек
@@ -39,14 +46,7 @@ public:
     }
 
     std::vector<Position> GetReferencedCells() const override {
-        [[maybe_unused]] const std::forward_list<Position>& fl =
-                                                         ast_.GetCells();
-        
-        // referenced_cells_ = std::move(std::vector<Position>{fl.begin(), fl.end()});
-        // return referenced_cells_;
-
-        // что тут надо делать?
-        return {};
+        return referenced_cells_;
     }
 
 private:
