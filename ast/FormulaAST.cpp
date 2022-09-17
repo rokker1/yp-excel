@@ -259,6 +259,8 @@ public:
             return std::get<double>(value);
         } else if (std::holds_alternative<FormulaError>(value)) {
             throw std::get<FormulaError>(value);
+        } else if (std::holds_alternative<std::string>(value)){
+            throw FormulaError(FormulaError::Category::Value);
         } else {
             throw std::runtime_error("e");
         }

@@ -63,7 +63,11 @@ void Cell::Set(std::string text) {
     }
 
     CellInterface::Value Cell::GetValue() const {
-        return impl_->GetValue();
+        try {
+            return impl_->GetValue();
+        } catch (const FormulaError& e) {
+            return e;
+        }
     }
     std::string Cell::GetText() const {
         return impl_->GetText();
