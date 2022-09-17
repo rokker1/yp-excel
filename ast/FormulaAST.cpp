@@ -147,13 +147,31 @@ public:
         switch (type_)
         {
         case Add:
-            return lhs_.get()->Evaluate(sheet) + rhs_.get()->Evaluate(sheet);
+            result = lhs_.get()->Evaluate(sheet) + rhs_.get()->Evaluate(sheet);
+                if (std::isfinite(result))
+                {
+                    return result;
+                } else {
+                    throw FormulaError(FormulaError::Category::Div0);
+                }
             break;
         case Subtract:
-            return lhs_.get()->Evaluate(sheet) - rhs_.get()->Evaluate(sheet);
+            result = lhs_.get()->Evaluate(sheet) - rhs_.get()->Evaluate(sheet);
+                if (std::isfinite(result))
+                {
+                    return result;
+                } else {
+                    throw FormulaError(FormulaError::Category::Div0);
+                }
             break;
         case Multiply:
-            return lhs_.get()->Evaluate(sheet) * rhs_.get()->Evaluate(sheet);
+            result = lhs_.get()->Evaluate(sheet) * rhs_.get()->Evaluate(sheet);
+                if (std::isfinite(result))
+                {
+                    return result;
+                } else {
+                    throw FormulaError(FormulaError::Category::Div0);
+                }
             break;
         case Divide:
             result = lhs_.get()->Evaluate(sheet) / rhs_.get()->Evaluate(sheet);
