@@ -7,7 +7,7 @@
 #include <functional>
 #include <iostream>
 #include <optional>
-
+#include <sstream>
 #include <fstream>
 
 using namespace std::literals;
@@ -24,17 +24,20 @@ void Sheet::SetCell(Position pos, std::string text) {
     if(y >= sheet_.size()) {
         // строки с таким индексом нет
         sheet_.resize(y + 1);
-        max_y_ = y + 1;
+        if (!text.empty()) {
+            max_y_ = y + 1;
+        }
+
 
         sheet_.at(y).resize(x + 1);
-        if(x >= max_x_) {
+        if(!text.empty() && x >= max_x_) {
             max_x_ = x + 1;
         }
     } else {
         // строка с таким индексом есть
         if(x >= sheet_.at(y).size()) {
             sheet_.at(y).resize(x + 1);
-            if(x >= max_x_) {
+            if(!text.empty() && x >= max_x_) {
                 max_x_ = x + 1;
             }
         }
@@ -43,7 +46,7 @@ void Sheet::SetCell(Position pos, std::string text) {
     // создается текущая ячейка
     std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(*this, text);
 
-    // если на текущий момент в ячейке [y, x] уже была ячейка, и там были записаны записимые ячейки,
+    // если на текущий момент в ячейке [y, x] уже была ячейка, и там были записаны зависимые ячейки,
     // их нужно перенести во вновь созданную ячейку, чтобы сохранить
     if(GetCell(pos) != nullptr) {
         Cell* c = dynamic_cast<Cell*>(GetCell(pos));
@@ -56,7 +59,6 @@ void Sheet::SetCell(Position pos, std::string text) {
                 throw std::runtime_error("Not a cell!");
             }
             cell_ptr->SetDependentCells(std::move(c->GetDependentCells()));
-
         }
     }
 
@@ -86,7 +88,7 @@ const CellInterface* Sheet::GetCell(Position pos) const {
     }
     const size_t y = pos.row;
     const size_t x = pos.col;
-    // поменять логику на возвращение пустой ячейки
+
     if(y >= sheet_.size()) {
         return nullptr;
     }
@@ -135,6 +137,18 @@ void Sheet::ClearCell(Position pos) {
     if(!pos.IsValid()) {
         throw InvalidPositionException("invalid position!");
     };
+
+    bool has_dependent_cells = false;
+    if(CellInterface* c = GetCell(pos)) {
+        Cell* cell_ptr = dynamic_cast<Cell*>(c);
+        if(!cell_ptr) {
+            throw std::runtime_error("not a cell!!");
+        }
+        if(!cell_ptr->GetDependentCells().empty()) {
+            has_dependent_cells = true;
+        }
+    }
+    
     const size_t y = pos.row;
     const size_t x = pos.col;
     if(sheet_.size() <= y) {
@@ -144,61 +158,124 @@ void Sheet::ClearCell(Position pos) {
         return;
     }
 
-    if(sheet_.at(y).size() == x + 1) {
-        // просиходит удаление последнего элемента строки
-        bool longest_row = false;
-        if (sheet_.at(y).size() == max_x_) {
-            longest_row = true;
-            // данная строка таблицы является (одной из) самых длинных
-            // необходим пересчет max_x_
-        }
-        // удаляем последний элемент в строке
-        sheet_.at(y).erase(prev(sheet_.at(y).end()));
-        // ищем первый не нулевой
-        [[maybe_unused]] auto reverse_it = std::find_if(sheet_.at(y).rbegin(), 
-                                                        sheet_.at(y).rend(),
-                [](const std::unique_ptr<CellInterface>& it){
-                    return it != nullptr;
-                });
-        // сколько пустых элементов в конце надо удалить
-        size_t to_be_remove = std::distance(sheet_.at(y).rbegin(), reverse_it);
-        sheet_.at(y).resize(sheet_.at(y).size() - to_be_remove);
 
-        if(y + 1 == sheet_.size()) {
-            // удаляемая ячейка находится в последней строке
-            if (sheet_.at(y).size() == 0 && sheet_.size() != 0) {
-                // последняя строка пуста
-                sheet_.resize(sheet_.size() - 1);
+    if(has_dependent_cells) {
+        // зависимые ячейки есть
+        if(sheet_.at(y).size() == x + 1) {
+            // просиходит удаление последнего элемента строки
+            bool longest_row = false;
+            if (sheet_.at(y).size() == max_x_) {
+                longest_row = true;
+                // данная строка таблицы является (одной из) самых длинных
+                // необходим пересчет max_x_
+            }
+            // ячейка становится пустой, зависимые сохраняются
+            SetCell(pos, "");
+            // ищем первый не нулевой
+            [[maybe_unused]] auto reverse_it = std::find_if(next(sheet_.at(y).rbegin()), // next
+                                                    sheet_.at(y).rend(),
+            [](const std::unique_ptr<CellInterface>& it){
+                return it != nullptr;
+            });
+            size_t to_be_remove = std::distance(sheet_.at(y).rbegin(), reverse_it);
+
+
+
+            if(y + 1 == sheet_.size()) {
+                // удаляемая ячейка находится в последней строке
+                if (sheet_.at(y).size() == 0 && sheet_.size() != 0) {
+                    // последняя строка пуста
+                    sheet_.resize(sheet_.size() - 1);
+                    max_y_ = sheet_.size();
+                }
+            }
+            // здесь нужна логика поиска последней ненулевой строки
+            [[maybe_unused]] auto last_non_empty_row_it = std::find_if(sheet_.rbegin(), 
+                                                            sheet_.rend(),
+                    [](const auto& row){
+                        return !row.empty();
+                    });
+            // сколько пустых элементов в конце надо удалить
+            to_be_remove = std::distance(sheet_.rbegin(), last_non_empty_row_it);
+            if(to_be_remove != 0) {
+                sheet_.resize(sheet_.size() - to_be_remove);
                 max_y_ = sheet_.size();
             }
-        }
-        // здесь нужна логика поиска последней ненулевой строки
-        [[maybe_unused]] auto last_non_empty_row_it = std::find_if(sheet_.rbegin(), 
-                                                        sheet_.rend(),
-                [](const auto& row){
-                    return !row.empty();
-                });
-        // сколько пустых элементов в конце надо удалить
-        to_be_remove = std::distance(sheet_.rbegin(), last_non_empty_row_it);
-        if(to_be_remove != 0) {
-            sheet_.resize(sheet_.size() - to_be_remove);
-            max_y_ = sheet_.size();
-        }
 
 
-        if(longest_row) {
-            size_t new_max_x = 0;
-            std::for_each(sheet_.begin(), sheet_.end(),
-                [&new_max_x](const auto& v) {
-                    if(new_max_x < v.size()) {
-                        new_max_x = v.size();
-                    }
-                });
-            max_x_ = new_max_x;
+            if(longest_row) {
+                size_t new_max_x = 0;
+                std::for_each(sheet_.begin(), sheet_.end(),
+                    [&new_max_x](const auto& v) {
+                        if(new_max_x < v.size()) {
+                            new_max_x = v.size();
+                        }
+                    });
+                max_x_ = new_max_x;
+            }
         }
+
     } else {
-        sheet_.at(y).at(x) = nullptr; // wrong
+        // зависимых ячеек нет
+        if(sheet_.at(y).size() == x + 1) {
+            // просиходит удаление последнего элемента строки
+            bool longest_row = false;
+            if (sheet_.at(y).size() == max_x_) {
+                longest_row = true;
+                // данная строка таблицы является (одной из) самых длинных
+                // необходим пересчет max_x_
+            }
+            // удаляем последний элемент в строке
+            sheet_.at(y).erase(prev(sheet_.at(y).end()));
+            // ищем первый не нулевой
+            [[maybe_unused]] auto reverse_it = std::find_if(sheet_.at(y).rbegin(), 
+                                                            sheet_.at(y).rend(),
+                    [](const std::unique_ptr<CellInterface>& it){
+                        return it != nullptr;
+                    });
+            // сколько пустых элементов в конце надо удалить
+            size_t to_be_remove = std::distance(sheet_.at(y).rbegin(), reverse_it);
+            sheet_.at(y).resize(sheet_.at(y).size() - to_be_remove);
+
+            if(y + 1 == sheet_.size()) {
+                // удаляемая ячейка находится в последней строке
+                if (sheet_.at(y).size() == 0 && sheet_.size() != 0) {
+                    // последняя строка пуста
+                    sheet_.resize(sheet_.size() - 1);
+                    max_y_ = sheet_.size();
+                }
+            }
+            // здесь нужна логика поиска последней ненулевой строки
+            [[maybe_unused]] auto last_non_empty_row_it = std::find_if(sheet_.rbegin(), 
+                                                            sheet_.rend(),
+                    [](const auto& row){
+                        return !row.empty();
+                    });
+            // сколько пустых элементов в конце надо удалить
+            to_be_remove = std::distance(sheet_.rbegin(), last_non_empty_row_it);
+            if(to_be_remove != 0) {
+                sheet_.resize(sheet_.size() - to_be_remove);
+                max_y_ = sheet_.size();
+            }
+
+
+            if(longest_row) {
+                size_t new_max_x = 0;
+                std::for_each(sheet_.begin(), sheet_.end(),
+                    [&new_max_x](const auto& v) {
+                        if(new_max_x < v.size()) {
+                            new_max_x = v.size();
+                        }
+                    });
+                max_x_ = new_max_x;
+            }
+        } else {
+            sheet_.at(y).at(x) = nullptr; // wrong
+        }
+
     }
+
+
 }
 
 Size Sheet::GetPrintableSize() const {
@@ -336,4 +413,16 @@ void Sheet::SetEmptyReferencedCellNotInPrintableArea(Position referenced_cell) {
     // создается пустая текущая ячейка
     std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(*this);
     sheet_[y][x] = std::move(cell);
+}
+
+bool Sheet::NonEmptyCell(Position position) const {
+    const CellInterface* cell = GetCell(position);
+    if(!cell) {
+        return false;
+    } else {
+        Cell::Value v = cell->GetValue();
+        std::ostringstream os;
+        std::visit(CellValuePrinter{os}, v);
+        return !os.str().empty();
+    }
 }

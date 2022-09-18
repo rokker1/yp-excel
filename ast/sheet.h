@@ -37,15 +37,21 @@ public:
 private:
     // ячейки
     std::vector<std::vector<std::unique_ptr<CellInterface>>> sheet_;
-    // максимальный размер таблицы по столбцам
+    // максимальный размер таблицы по столбцам (печатная область)
     size_t max_x_ = 0;
-    // максимальный размер таблицы по строкам
+    // максимальный размер таблицы по строкам (печатная область)
     size_t max_y_ = 0;
+
+    // размер максимальной строки в печатной области
+    size_t longest_row_ = 0;
 
     // граф
     // http://shujkova.ru/sites/default/files/algorithm2.pdf
     // https://habr.com/ru/post/504374/
     void CheckCycles(const std::vector<Position>& ref_cells, Position begin);
+    // возвращает истону, если ячейка хранит не пустой текст
+    bool NonEmptyCell(Position position) const;
+
     
     struct CellValuePrinter {
         CellValuePrinter(std::ostream& output)
