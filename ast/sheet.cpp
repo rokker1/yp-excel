@@ -56,13 +56,13 @@ void Sheet::SetCell(Position pos, std::string text) {
                 throw std::runtime_error("Not a cell!");
             }
             cell_ptr->SetDependentCells(std::move(c->GetDependentCells()));
+
         }
     }
 
-    /*
-     * вот здесь - если зависимая ячейка ранее создавалась, нужно создать ячейку с пустым тектом и положить туда
-     * текущую ячейку в dependent cells
-     */
+    // Выполним проверку на циклы
+    const auto& ref_cells = cell->GetReferencedCells();
+    CheckCycles(ref_cells, pos);
 
     // записать себя в список зависимых ячеек для всех ячеек,
     // которые указаны в моем перечне  referenced_cells_
@@ -283,7 +283,24 @@ void Sheet::AddDependentCell(Position referenced_cell, Position dependent_cell) 
     } else {
         throw std::runtime_error("wtf");
     }
+}
 
+void Sheet::CheckCycles(const std::vector<Position>& ref_cells, Position begin) {
 
+    for(const Position ref_cell : ref_cells) {
+        if (begin == ref_cell) {
+            throw CircularDependencyException("cycle catched");
+        }
+    }
 
+    CellInterface* begin_cell = GetCell(begin);
+    if(begin_cell) {
+        Cell* begin_cell_ptr = dynamic_cast<Cell*>(begin_cell);
+        if(!begin_cell_ptr) {
+            throw  std::runtime_error("not a cell!");
+        }
+        for(const auto dep_cell : begin_cell_ptr->GetDependentCells()) {
+            CheckCycles(ref_cells, dep_cell);
+        }
+    }
 }

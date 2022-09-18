@@ -33,6 +33,7 @@ void Cell::Set(std::string text) {
             std::unique_ptr<FormulaInterface> formula;
             try {
                 formula = ParseFormula(text.substr(1));
+
             } catch (...) {
                 throw FormulaException("bad formula");
             }

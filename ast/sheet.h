@@ -42,7 +42,7 @@ private:
     // граф
     // http://shujkova.ru/sites/default/files/algorithm2.pdf
     // https://habr.com/ru/post/504374/
-    
+    void CheckCycles(const std::vector<Position>& ref_cells, Position begin);
     
     struct CellValuePrinter {
         CellValuePrinter(std::ostream& output)
