@@ -70,7 +70,9 @@ void Sheet::SetCell(Position pos, std::string text) {
     for(Position referenced_cell : cell->GetReferencedCells()) {
         if(GetCell(referenced_cell) == nullptr) {
             // мы ссылаемся на пустую ячейку - создадим ее пустым текстом
+            // здесь пытается прокрасться ошибка! Мы найдем её!
             SetCell(referenced_cell, "");
+            SetEmptyReferencedCellNotInPrintableArea(referenced_cell);
         }
         AddDependentCell(referenced_cell, Position{static_cast<int>(y), static_cast<int>(x)});
     }
@@ -303,4 +305,35 @@ void Sheet::CheckCycles(const std::vector<Position>& ref_cells, Position begin) 
             CheckCycles(ref_cells, dep_cell);
         }
     }
+}
+
+void Sheet::SetEmptyReferencedCellNotInPrintableArea(Position referenced_cell) {
+    if(!referenced_cell.IsValid()) {
+            throw InvalidPositionException("invalid position!");
+        }
+        const size_t y = referenced_cell.row;
+        const size_t x = referenced_cell.col;
+
+        if(y >= sheet_.size()) {
+            // строки с таким индексом нет
+            sheet_.resize(y + 1);
+            // max_y_ = y + 1;
+
+            sheet_.at(y).resize(x + 1);
+            // if(x >= max_x_) {
+            //     max_x_ = x + 1;
+            // }
+        } else {
+            // строка с таким индексом есть
+            if(x >= sheet_.at(y).size()) {
+                sheet_.at(y).resize(x + 1);
+                // if(x >= max_x_) {
+                //     max_x_ = x + 1;
+                // }
+            }
+        }
+
+    // создается пустая текущая ячейка
+    std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(*this);
+    sheet_[y][x] = std::move(cell);
 }

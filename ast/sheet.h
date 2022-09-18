@@ -30,6 +30,9 @@ public:
 
 	// Можете дополнить ваш класс нужными полями и методами
     void AddDependentCell(Position referenced_cell, Position dependent_cell);
+    // метод, когда надо создать пустую ячейку, на которую кто-то ссылается
+    // эта ячейка не попадет в печатную зону.
+    void SetEmptyReferencedCellNotInPrintableArea(Position referenced_cell);
 
 private:
     // ячейки
