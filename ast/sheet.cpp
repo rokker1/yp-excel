@@ -40,7 +40,29 @@ void Sheet::SetCell(Position pos, std::string text) {
         }
     }
 
+    // создается текущая ячейка
     std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(*this, text);
+
+    // если на текущий момент в ячейке [y, x] уже была ячейка, и там были записаны записимые ячейки,
+    // их нужно перенести во вновь созданную ячейку, чтобы сохранить
+    if(GetCell(pos) != nullptr) {
+        Cell* c = dynamic_cast<Cell*>(GetCell(pos));
+        if(!c) {
+            throw std::runtime_error("Not a cell!");
+        }
+        if(!c->GetDependentCells().empty()) {
+            Cell* cell_ptr = dynamic_cast<Cell*>(cell.get());
+            if(!cell_ptr) {
+                throw std::runtime_error("Not a cell!");
+            }
+            cell_ptr->SetDependentCells(std::move(c->GetDependentCells()));
+        }
+    }
+
+    /*
+     * вот здесь - если зависимая ячейка ранее создавалась, нужно создать ячейку с пустым тектом и положить туда
+     * текущую ячейку в dependent cells
+     */
 
     // записать себя в список зависимых ячеек для всех ячеек,
     // которые указаны в моем перечне  referenced_cells_
@@ -74,6 +96,11 @@ const CellInterface* Sheet::GetCell(Position pos) const {
     return sheet_.at(y).at(x).get();
 }
 CellInterface* Sheet::GetCell(Position pos) {
+    /*
+     * !!! это крайне неправильно что гетселл меняет печатную область !!!
+     * печастная область должна быть сама по себе как независимый параметр
+     * возможно надо завести еще один параметр - максимальный размер строки в листе
+     */
     if(!pos.IsValid()) {
         throw InvalidPositionException("invalid position!");
     }
@@ -81,15 +108,17 @@ CellInterface* Sheet::GetCell(Position pos) {
     const size_t x = pos.col;
 
     if(y >= sheet_.size()) {
-        SetCell(pos, "");
-        sheet_.at(y).at(x) = nullptr;
-        return sheet_.at(y).at(x).get();
+//        SetCell(pos, "");
+//        sheet_.at(y).at(x) = nullptr;
+//        return sheet_.at(y).at(x).get();
+        return nullptr;
     }
     if(x >= sheet_.at(y).size()) {
 
-        SetCell(pos, "");
-        sheet_.at(y).at(x) = nullptr;
-        return sheet_.at(y).at(x).get();
+//        SetCell(pos, "");
+//        sheet_.at(y).at(x) = nullptr;
+//        return sheet_.at(y).at(x).get();
+        return nullptr;
     }
 
     return sheet_.at(y).at(x).get();
@@ -254,4 +283,7 @@ void Sheet::AddDependentCell(Position referenced_cell, Position dependent_cell) 
     } else {
         throw std::runtime_error("wtf");
     }
+
+
+
 }

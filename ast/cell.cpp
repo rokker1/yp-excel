@@ -22,6 +22,7 @@ void Cell::Set(std::string text) {
         Clear();
         return;
     }
+
     // добавляется возможность индексов ячеек
     if(text[0] == FORMULA_SIGN) {
         if(text.size() == 1) {

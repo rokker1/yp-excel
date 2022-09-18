@@ -26,7 +26,9 @@ public:
 
     void AddDependentCell(Position dependent_cell);
     virtual std::set<Position> GetDependentCells() const;
-
+    void SetDependentCells(std::set<Position>&& dependent_cells) {
+        impl_->SetDependentCells(std::move(dependent_cells));
+    }
 private:
 
     class Impl {
@@ -47,7 +49,9 @@ private:
         std::set<Position> GetDependentCells() const {
             return dependent_cells_;
         }
-
+        void SetDependentCells(std::set<Position>&& dependent_cells) {
+            dependent_cells_ = std::move(dependent_cells);
+        }
     protected:    
         SheetInterface& sheet_;
         std::optional<double> cached_value_;

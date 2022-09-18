@@ -333,14 +333,14 @@ void TestFormulaIncorrect() {
 
 void TestCellCircularReferences() {
     auto sheet = CreateSheet();
-    sheet->SetCell("E2"_pos, "=E4");
-    sheet->SetCell("E4"_pos, "=X9");
-    sheet->SetCell("X9"_pos, "=M6");
-    sheet->SetCell("M6"_pos, "Ready");
+    sheet->SetCell("A1"_pos, "=A2");
+    sheet->SetCell("A2"_pos, "=A3");
+    sheet->SetCell("A3"_pos, "=A4");
+    sheet->SetCell("A4"_pos, "Ready");
 
     bool caught = false;
     try {
-        sheet->SetCell("M6"_pos, "=E2");
+        sheet->SetCell("A4"_pos, "=A1");
     } catch (const CircularDependencyException&) {
         caught = true;
     }
