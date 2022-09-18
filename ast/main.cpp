@@ -348,6 +348,50 @@ namespace {
         ASSERT(caught);
         ASSERT_EQUAL(sheet->GetCell("M6"_pos)->GetText(), "Ready");
     }
+    void TestEditTable(){
+        auto sheet = CreateSheet();
+        sheet->SetCell("A1"_pos, "=(1+2)*3");
+        sheet->SetCell("A2"_pos, "some");    sheet->SetCell("B1"_pos, "=1+(2*3)");
+        sheet->SetCell("B2"_pos, "text");
+        sheet->SetCell("B5"_pos, "=1/0");    sheet->SetCell("C2"_pos, "here");
+        sheet->SetCell("C3"_pos, "\'and");    sheet->SetCell("D3"_pos, "\'here");    ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{5, 4}));    {
+            std::ostringstream texts;
+            sheet->PrintTexts(texts);
+            
+            ASSERT_EQUAL(texts.str(),
+            "=(1+2)*3\t=1+2*3\t\t\nsome\ttext\there\t\n\t\t\'and\t\'here\n\t\t\t\n\t=1/0\t\t\n");        std::ostringstream values;
+            sheet->PrintValues(values);
+            
+            ASSERT_EQUAL(values.str(),
+            "9\t7\t\t\nsome\ttext\there\t\n\t\tand\there\n\t\t\t\n\t#DIV/0!\t\t\n");
+        }    sheet->ClearCell("B5"_pos);
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{3, 4}));
+        {
+            std::ostringstream texts;
+            sheet->PrintTexts(texts);
+            
+            ASSERT_EQUAL(texts.str(),
+            "=(1+2)*3\t=1+2*3\t\t\nsome\ttext\there\t\n\t\t\'and\t\'here\n");        std::ostringstream values;
+            sheet->PrintValues(values);        ASSERT_EQUAL(values.str(),
+            "9\t7\t\t\nsome\ttext\there\t\n\t\tand\there\n");
+        }    sheet->ClearCell("D3"_pos);
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{3, 3}));
+        {
+            std::ostringstream texts;
+            sheet->PrintTexts(texts);        ASSERT_EQUAL(texts.str(),
+            "=(1+2)*3\t=1+2*3\t\nsome\ttext\there\n\t\t\'and\n");        std::ostringstream values;
+            sheet->PrintValues(values);        ASSERT_EQUAL(values.str(),
+            "9\t7\t\nsome\ttext\there\n\t\tand\n");
+        }    sheet->ClearCell("A1"_pos);
+        sheet->ClearCell("A2"_pos);
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{3, 3}));    {
+            std::ostringstream texts;
+            sheet->PrintTexts(texts);        ASSERT_EQUAL(texts.str(),
+            "\t=1+2*3\t\n\ttext\there\n\t\t\'and\n");        std::ostringstream values;
+            sheet->PrintValues(values);        ASSERT_EQUAL(values.str(),
+            "\t7\t\n\ttext\there\n\t\tand\n");
+        }
+    }
 }  // namespace
 
 int main() {
@@ -371,5 +415,6 @@ int main() {
     RUN_TEST(tr, TestCellReferences);
     RUN_TEST(tr, TestFormulaIncorrect);
     RUN_TEST(tr, TestCellCircularReferences);
+    RUN_TEST(tr, TestEditTable);
     return 0;
 }
