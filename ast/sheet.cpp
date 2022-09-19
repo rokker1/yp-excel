@@ -25,40 +25,39 @@ void Sheet::SetCell(Position pos, std::string text) {
         // строки с таким индексом нет
         sheet_.resize(y + 1);
         if (!text.empty()) {
-            max_y_ = y + 1;
+            print_area_.rows = y + 1;
         }
-
-
         sheet_.at(y).resize(x + 1);
-        if(!text.empty() && x >= max_x_) {
-            max_x_ = x + 1;
+        if(!text.empty() && x >= print_area_.cols) {
+            print_area_.cols = x + 1;
         }
     } else {
         // строка с таким индексом есть
         if(x >= sheet_.at(y).size()) {
             sheet_.at(y).resize(x + 1);
-            if(!text.empty() && x >= max_x_) {
-                max_x_ = x + 1;
+            if(!text.empty() && x >= print_area_.cols) {
+                print_area_.cols = x + 1;
             }
         }
     }
 
     // создается текущая ячейка
     std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(*this, text);
+    
 
     // если на текущий момент в ячейке [y, x] уже была ячейка, и там были записаны зависимые ячейки,
     // их нужно перенести во вновь созданную ячейку, чтобы сохранить
     if(GetCell(pos) != nullptr) {
-        Cell* c = dynamic_cast<Cell*>(GetCell(pos));
-        if(!c) {
+        Cell* previous_cell = dynamic_cast<Cell*>(GetCell(pos));
+        if(!previous_cell) {
             throw std::runtime_error("Not a cell!");
         }
-        if(!c->GetDependentCells().empty()) {
-            Cell* cell_ptr = dynamic_cast<Cell*>(cell.get());
-            if(!cell_ptr) {
+        if(!previous_cell->GetDependentCells().empty()) {
+            Cell* new_cell = dynamic_cast<Cell*>(cell.get());
+            if(!new_cell) {
                 throw std::runtime_error("Not a cell!");
             }
-            cell_ptr->SetDependentCells(std::move(c->GetDependentCells()));
+            new_cell->SetDependentCells(std::move(previous_cell->GetDependentCells()));
         }
     }
 
@@ -76,7 +75,7 @@ void Sheet::SetCell(Position pos, std::string text) {
             SetCell(referenced_cell, "");
             SetEmptyReferencedCellNotInPrintableArea(referenced_cell);
         }
-        AddDependentCell(referenced_cell, Position{static_cast<int>(y), static_cast<int>(x)});
+        AddDependentCell(referenced_cell, pos);
     }
 
     sheet_[y][x] = std::move(cell);
@@ -138,16 +137,12 @@ void Sheet::ClearCell(Position pos) {
         throw InvalidPositionException("invalid position!");
     };
 
-    bool has_dependent_cells = false;
-    if(CellInterface* c = GetCell(pos)) {
-        Cell* cell_ptr = dynamic_cast<Cell*>(c);
-        if(!cell_ptr) {
-            throw std::runtime_error("not a cell!!");
-        }
-        if(!cell_ptr->GetDependentCells().empty()) {
-            has_dependent_cells = true;
-        }
-    }
+    bool has_dependent_cells = HasDependentCells(pos);
+    /*
+    от того, имеет ли ячейка зависимые - зависит дальнейшее поведение.
+    Если не имеет - мы запишем вместо нее nullptr и уменьшим размеры векторов.
+    Если имеет - мы запишем пустой текст, и уменьшим печатную область.
+    */
     
     const size_t y = pos.row;
     const size_t x = pos.col;
@@ -158,28 +153,27 @@ void Sheet::ClearCell(Position pos) {
         return;
     }
 
-
     if(has_dependent_cells) {
         // зависимые ячейки есть
         if(sheet_.at(y).size() == x + 1) {
             // просиходит удаление последнего элемента строки
             bool longest_row = false;
-            if (sheet_.at(y).size() == max_x_) {
+            if (sheet_.at(y).size() == print_area_.cols) {
                 longest_row = true;
                 // данная строка таблицы является (одной из) самых длинных
-                // необходим пересчет max_x_
+                // необходим пересчет print_area_.cols
             }
             // ячейка становится пустой, зависимые сохраняются
             SetCell(pos, "");
-            // ищем первый не нулевой
-            [[maybe_unused]] auto reverse_it = std::find_if(next(sheet_.at(y).rbegin()), // next
+            // ищем первую непустую ячейку с конца - sheet_.at(y).rbegin()
+            [[maybe_unused]] auto reverse_it = std::find_if(sheet_.at(y).rbegin(),
                                                     sheet_.at(y).rend(),
-            [](const std::unique_ptr<CellInterface>& it){
-                return it != nullptr;
+            [this](const std::unique_ptr<CellInterface>& it){
+                //return it != nullptr;
+                return IsNonEmptyCell(it);
             });
             size_t to_be_remove = std::distance(sheet_.at(y).rbegin(), reverse_it);
-
-
+            // sheet_.at(y).resize(sheet_.at(y).size() - to_be_remove);
 
             if(y + 1 == sheet_.size()) {
                 // удаляемая ячейка находится в последней строке
@@ -411,13 +405,13 @@ void Sheet::SetEmptyReferencedCellNotInPrintableArea(Position referenced_cell) {
         }
 
     // создается пустая текущая ячейка
-    std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(*this);
-    sheet_[y][x] = std::move(cell);
+    sheet_[y][x] = std::make_unique<Cell>(*this);
 }
 
-bool Sheet::NonEmptyCell(Position position) const {
+bool Sheet::IsNonEmptyCell(Position position) const {
     const CellInterface* cell = GetCell(position);
     if(!cell) {
+        // nullptr вернет false
         return false;
     } else {
         Cell::Value v = cell->GetValue();
@@ -425,4 +419,29 @@ bool Sheet::NonEmptyCell(Position position) const {
         std::visit(CellValuePrinter{os}, v);
         return !os.str().empty();
     }
+}
+bool Sheet::IsNonEmptyCell(const std::unique_ptr<CellInterface>& cell) const {
+    if(!cell) {
+        // nullptr вернет false
+        return false;
+    } else {
+        Cell::Value v = cell->GetValue();
+        std::ostringstream os;
+        std::visit(CellValuePrinter{os}, v);
+        return !os.str().empty();
+    }
+}
+
+bool Sheet::HasDependentCells(Position pos) const {
+    bool has_dependent_cells = false;
+    if(const CellInterface* c = GetCell(pos)) {
+        const Cell* cell_ptr = dynamic_cast<const Cell*>(c);
+        if(!cell_ptr) {
+            throw std::runtime_error("not a cell!!");
+        }
+        if(!cell_ptr->GetDependentCells().empty()) {
+            has_dependent_cells = true;
+        }
+    }
+    return has_dependent_cells;
 }
