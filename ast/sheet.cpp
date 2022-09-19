@@ -293,15 +293,16 @@ Size Sheet::GetPrintableSize() const {
 }
 
 void Sheet::PrintValues(std::ostream& output) const {
-    for(const auto& row : sheet_) {
+    for(int row_index = 0; row_index < print_area_.rows; ++row_index) {
         bool is_first_col = true;
-        for(const auto& cell : row) {
+
+        for(int x = 0; x < print_area_.cols; ++x) {
             if(!is_first_col) {
                 output << '\t';
             }
             is_first_col = false;
-
-            if(cell.get() != nullptr) {
+            auto cell = GetCell({row_index, x});
+            if(cell != nullptr) {
                 auto value = cell->GetValue();
                 std::visit(CellValuePrinter{output}, value);
             } else {
@@ -309,49 +310,50 @@ void Sheet::PrintValues(std::ostream& output) const {
             }
         }
 
-        if(row.empty()) {
-            // выведи max_x_ - 1 табуляций
-            for (size_t i = 0; i + 1 < static_cast<size_t>(print_area_.cols); ++i) {
-                output << '\t';
-            }
-        } else {
-            // выведи max_x_ - size() табуляций
-            for (size_t i = 0; i < (print_area_.cols - row.size()); ++i) {
-                output << '\t';
-            }
-        }
+        // if(row.empty()) {
+        //     // выведи max_x_ - 1 табуляций
+        //     for (size_t i = 0; i + 1 < static_cast<size_t>(print_area_.cols); ++i) {
+        //         output << '\t';
+        //     }
+        // } else {
+        //     // выведи max_x_ - size() табуляций
+        //     for (size_t i = 0; i < (print_area_.cols - row.size()); ++i) {
+        //         output << '\t';
+        //     }
+        // }
 
         output << '\n';
     }
 }
 void Sheet::PrintTexts(std::ostream& output) const {
-    for(const auto& row : sheet_) {
+    for(int row_index = 0; row_index < print_area_.rows; ++row_index) {
         bool is_first_col = true;
-        for(const auto& cell : row) {
+
+        for(int x = 0; x < print_area_.cols; ++x) {
             if(!is_first_col) {
                 output << '\t';
             }
             is_first_col = false;
-
-            if(cell.get() != nullptr) {
-                output << cell->GetText();
-
+            auto cell = GetCell({row_index, x});
+            if(cell != nullptr) {
+                auto value = cell->GetText();
+                output << value;
             } else {
                 output << "";
             }
         }
 
-        if(row.empty()) {
-            // выведи max_x_ - 1 табуляций
-            for (size_t i = 0; i + 1 < static_cast<size_t>(print_area_.cols); ++i) {
-                output << '\t';
-            }
-        } else {
-            // выведи max_x_ - size() табуляций
-            for (size_t i = 0; i < (print_area_.cols - row.size()); ++i) {
-                output << '\t';
-            }
-        }
+        // if(row.empty()) {
+        //     // выведи max_x_ - 1 табуляций
+        //     for (size_t i = 0; i + 1 < static_cast<size_t>(print_area_.cols); ++i) {
+        //         output << '\t';
+        //     }
+        // } else {
+        //     // выведи max_x_ - size() табуляций
+        //     for (size_t i = 0; i < (print_area_.cols - row.size()); ++i) {
+        //         output << '\t';
+        //     }
+        // }
 
         output << '\n';
     }
