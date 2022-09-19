@@ -239,6 +239,9 @@ void Sheet::ClearCell(Position pos) {
             }
             // удаляем последний элемент в строке
             sheet_.at(y).erase(prev(sheet_.at(y).end()));
+            if (is_printable) {
+                rows_printable_size_[y]--;
+            }
             // ищем первый не нулевой
             [[maybe_unused]] auto reverse_it = std::find_if(sheet_.at(y).rbegin(), 
                                                             sheet_.at(y).rend(),
@@ -248,7 +251,9 @@ void Sheet::ClearCell(Position pos) {
             // сколько пустых элементов в конце надо удалить
             size_t to_be_remove = std::distance(sheet_.at(y).rbegin(), reverse_it);
             sheet_.at(y).resize(sheet_.at(y).size() - to_be_remove);
+            rows_printable_size_[y] -= to_be_remove;
 
+            
             if(y + 1 == sheet_.size()) {
                 // удаляемая ячейка находится в последней строке
                 if (sheet_.at(y).size() == 0 && sheet_.size() != 0) {
