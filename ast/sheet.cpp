@@ -24,26 +24,42 @@ void Sheet::SetCell(Position pos, std::string text) {
     // создается текущая ячейка
     std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(*this, text);
     bool is_printable = IsNonEmptyCell(cell);
+    // если ячейка печатная, она поменяет размер печатной области
+    // если ячейка непечатная она не поменяет размер печатной области
 
     if(y >= sheet_.size()) {
         // строки с таким индексом нет
         sheet_.resize(y + 1);
+        rows_printable_size_.resize(y + 1);
         if (is_printable) {
             print_area_.rows = y + 1;
+            last_printable_row = y + 1;
         }
         sheet_.at(y).resize(x + 1);
-        if(is_printable && x >= print_area_.cols) {
+        if(is_printable && x >= static_cast<size_t>(print_area_.cols)) {
             print_area_.cols = x + 1;
+            rows_printable_size_[y] = x + 1;
         }
     } else {
         // строка с таким индексом есть
         if(x >= sheet_.at(y).size()) {
             sheet_.at(y).resize(x + 1);
-            if(is_printable && x >= print_area_.cols) {
+            if(is_printable && x >= static_cast<size_t>(print_area_.cols)) {
                 print_area_.cols = x + 1;
+                rows_printable_size_[y] = x + 1;
             }
         }
     }
+
+    // здесь для старой ячейки нужно пройтись по зависимым ячейкам и удалить ссылку на это ячейку
+    if(GetCell(pos) != nullptr) {
+        Cell* previous_cell = dynamic_cast<Cell*>(GetCell(pos));
+        for(Position referenced_cell : previous_cell->GetReferencedCells()) {
+            RemoveDependentCell(referenced_cell, pos);
+        }
+    }
+
+
     // если на текущий момент в ячейке [y, x] уже была ячейка, и там были записаны зависимые ячейки,
     // их нужно перенести во вновь созданную ячейку, чтобы сохранить
     if(GetCell(pos) != nullptr) {
@@ -156,7 +172,8 @@ void Sheet::ClearCell(Position pos) {
         if(sheet_.at(y).size() == x + 1) {
             // просиходит удаление последнего элемента строки
             bool longest_row = false;
-            if (sheet_.at(y).size() == print_area_.cols) {
+
+            if (sheet_.at(y).size() == static_cast<size_t>(print_area_.cols)) {
                 longest_row = true;
                 // данная строка таблицы является (одной из) самых длинных
                 // необходим пересчет print_area_.cols
@@ -212,7 +229,7 @@ void Sheet::ClearCell(Position pos) {
         if(sheet_.at(y).size() == x + 1) {
             // просиходит удаление последнего элемента строки
             bool longest_row = false;
-            if (sheet_.at(y).size() == print_area_.cols) {
+            if (sheet_.at(y).size() == static_cast<size_t>(print_area_.cols)) {
                 longest_row = true;
                 // данная строка таблицы является (одной из) самых длинных
                 // необходим пересчет max_x_
@@ -291,7 +308,7 @@ void Sheet::PrintValues(std::ostream& output) const {
 
         if(row.empty()) {
             // выведи max_x_ - 1 табуляций
-            for (size_t i = 0; i + 1 < print_area_.cols; ++i) {
+            for (size_t i = 0; i + 1 < static_cast<size_t>(print_area_.cols); ++i) {
                 output << '\t';
             }
         } else {
@@ -323,7 +340,7 @@ void Sheet::PrintTexts(std::ostream& output) const {
 
         if(row.empty()) {
             // выведи max_x_ - 1 табуляций
-            for (size_t i = 0; i + 1 < print_area_.cols; ++i) {
+            for (size_t i = 0; i + 1 < static_cast<size_t>(print_area_.cols); ++i) {
                 output << '\t';
             }
         } else {
@@ -440,4 +457,15 @@ bool Sheet::HasDependentCells(Position pos) const {
         }
     }
     return has_dependent_cells;
+}
+
+
+void Sheet::RemoveDependentCell(Position referenced_cell, Position dependent_cell) {
+    CellInterface* ref_cell = GetCell(referenced_cell);
+    Cell* c = dynamic_cast<Cell*>(ref_cell);
+    if(c) {
+        c->RemoveDependentCell(dependent_cell);
+    } else {
+        throw std::runtime_error("wtf");
+    }
 }

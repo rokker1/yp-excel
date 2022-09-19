@@ -88,6 +88,9 @@ void Cell::Set(std::string text) {
     void Cell::AddDependentCell(Position dependent_cell) {
         impl_->AddDependentCell(dependent_cell);
     }
+    void Cell::RemoveDependentCell(Position dependent_cell) {
+        impl_->RemoveDependentCell(dependent_cell);
+    }
     std::set<Position> Cell::GetDependentCells() const {
         return impl_->GetDependentCells();
     }

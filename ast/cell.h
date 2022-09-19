@@ -25,6 +25,7 @@ public:
     bool IsReferenced() const;
 
     void AddDependentCell(Position dependent_cell);
+    void RemoveDependentCell(Position dependent_cell);
     virtual std::set<Position> GetDependentCells() const;
     void SetDependentCells(std::set<Position>&& dependent_cells) {
         impl_->SetDependentCells(std::move(dependent_cells));
@@ -45,6 +46,9 @@ private:
 
         void AddDependentCell(Position dependent_cell) {
             dependent_cells_.insert(dependent_cell);
+        }
+        void RemoveDependentCell(Position dependent_cell) {
+            dependent_cells_.erase(dependent_cell);
         }
         std::set<Position> GetDependentCells() const {
             return dependent_cells_;

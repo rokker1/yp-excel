@@ -392,6 +392,18 @@ namespace {
             "\t7\t\n\ttext\there\n\t\tand\n");
         }
     }
+    void TestCacheCorrect() {
+        auto sheet = CreateSheet();
+
+        // Ссылка на пустую ячейку
+        /*sheet->SetCell("B2"_pos, "=B1");
+        ASSERT(sheet->GetCell("B1"_pos)->GetReferencedCells().empty());*/
+
+        sheet->SetCell("B2"_pos, "=B1");
+        ASSERT_EQUAL(sheet->GetCell("B2"_pos)->GetValue(), CellInterface::Value(0.0));
+        sheet->SetCell("B1"_pos, "5");
+        ASSERT_EQUAL(sheet->GetCell("B2"_pos)->GetValue(), CellInterface::Value(5.0));
+    }
 }  // namespace
 
 int main() {
@@ -416,5 +428,6 @@ int main() {
     RUN_TEST(tr, TestFormulaIncorrect);
     RUN_TEST(tr, TestCellCircularReferences);
     RUN_TEST(tr, TestEditTable);
+    RUN_TEST(tr, TestCacheCorrect);
     return 0;
 }

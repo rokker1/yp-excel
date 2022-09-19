@@ -34,11 +34,14 @@ public:
     // эта ячейка не попадет в печатную зону.
     void SetEmptyReferencedCellNotInPrintableArea(Position referenced_cell);
     bool HasDependentCells(Position pos) const;
+    void RemoveDependentCell(Position referenced_cell, Position dependent_cell);
 private:
     // ячейки
     std::vector<std::vector<std::unique_ptr<CellInterface>>> sheet_;
     // скольк печатных элементов в каждой строке
     std::vector<size_t> rows_printable_size_; // rps
+    // последняя печатная строка
+    size_t last_printable_row = 0;
     // // максимальный размер таблицы по столбцам (печатная область)
     // size_t max_x_ = 0;
     // // максимальный размер таблицы по строкам (печатная область)
