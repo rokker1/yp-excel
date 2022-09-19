@@ -167,60 +167,63 @@ void Sheet::ClearCell(Position pos) {
         return;
     }
 
+    bool is_printable = IsNonEmptyCell(pos);
+
     if(has_dependent_cells) {
         // зависимые ячейки есть
-        if(sheet_.at(y).size() == x + 1) {
-            // просиходит удаление последнего элемента строки
-            bool longest_row = false;
-
-            if (sheet_.at(y).size() == static_cast<size_t>(print_area_.cols)) {
-                longest_row = true;
-                // данная строка таблицы является (одной из) самых длинных
-                // необходим пересчет print_area_.cols
-            }
+        
+        if (!is_printable) {
             // ячейка становится пустой, зависимые сохраняются
             SetCell(pos, "");
-            // ищем первую непустую ячейку с конца - sheet_.at(y).rbegin()
-            [[maybe_unused]] auto reverse_it = std::find_if(sheet_.at(y).rbegin(),
-                                                    sheet_.at(y).rend(),
-            [this](const std::unique_ptr<CellInterface>& it){
-                //return it != nullptr;
-                return IsNonEmptyCell(it);
-            });
-            size_t to_be_remove = std::distance(sheet_.at(y).rbegin(), reverse_it);
-            // sheet_.at(y).resize(sheet_.at(y).size() - to_be_remove);
+        } else {
+            // ячейка становится пустой, зависимые сохраняются
+            SetCell(pos, "");
 
-            if(y + 1 == sheet_.size()) {
-                // удаляемая ячейка находится в последней строке
-                if (sheet_.at(y).size() == 0 && sheet_.size() != 0) {
-                    // последняя строка пуста
-                    sheet_.resize(sheet_.size() - 1);
-                    print_area_.rows = sheet_.size();
+            // ячейка печатная
+            // нужен пересчет printable area
+            if(sheet_.at(y).size() == x + 1) {
+                bool longest_row = false;
+                if (sheet_.at(y).size() == static_cast<size_t>(print_area_.cols)) {
+                    longest_row = true;
+                    // данная строка таблицы является (одной из) самых длинных
+                    // необходим пересчет max_x_
                 }
-            }
-            // здесь нужна логика поиска последней ненулевой строки
-            [[maybe_unused]] auto last_non_empty_row_it = std::find_if(sheet_.rbegin(), 
-                                                            sheet_.rend(),
-                    [](const auto& row){
-                        return !row.empty();
-                    });
-            // сколько пустых элементов в конце надо удалить
-            to_be_remove = std::distance(sheet_.rbegin(), last_non_empty_row_it);
-            if(to_be_remove != 0) {
-                sheet_.resize(sheet_.size() - to_be_remove);
-                print_area_.rows = sheet_.size();
-            }
+                // ищем первый не нулевой
+                [[maybe_unused]] auto reverse_it = std::find_if(sheet_.at(y).rbegin(), 
+                                                                sheet_.at(y).rend(),
+                        [this](const std::unique_ptr<CellInterface>& it){
+                            return IsNonEmptyCell(it);
+                        });
+                // сколько пустых элементов в конце надо удалить
+                size_t to_be_remove = std::distance(sheet_.at(y).rbegin(), reverse_it);
+                rows_printable_size_[y] -= to_be_remove;
 
+                if(y + 1 == static_cast<size_t>(print_area_.rows)) {
+                    // это была последняя строка в печтатной области
+                    if(rows_printable_size_[y] == 0 && print_area_.rows != 0) {
+                        print_area_.rows--;
 
-            if(longest_row) {
-                size_t new_max_x = 0;
-                std::for_each(sheet_.begin(), sheet_.end(),
-                    [&new_max_x](const auto& v) {
-                        if(new_max_x < v.size()) {
-                            new_max_x = v.size();
+                        // здесь нужна логика поиска последней печатной строки
+                        size_t last_printable_row = y;
+                        while (rows_printable_size_[last_printable_row] == 0
+                                && last_printable_row > 0) {
+                            --last_printable_row;
                         }
-                    });
-                print_area_.cols = new_max_x;
+                        print_area_.rows = last_printable_row;
+                    }
+                }
+
+                if(longest_row) {
+                    size_t new_max_x = 0;
+                    std::for_each(rows_printable_size_.begin(),
+                                    rows_printable_size_.end(),
+                                    [&](const size_t n){
+                                        if (n > new_max_x) {
+                                            new_max_x = n;
+                                        }
+                                    });
+                    print_area_.rows = new_max_x;
+                }
             }
         }
 
@@ -251,7 +254,7 @@ void Sheet::ClearCell(Position pos) {
                 if (sheet_.at(y).size() == 0 && sheet_.size() != 0) {
                     // последняя строка пуста
                     sheet_.resize(sheet_.size() - 1);
-                    print_area_.cols = sheet_.size();
+                    print_area_.rows = sheet_.size();
                 }
             }
             // здесь нужна логика поиска последней ненулевой строки
