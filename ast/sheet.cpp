@@ -21,30 +21,29 @@ void Sheet::SetCell(Position pos, std::string text) {
     const size_t y = pos.row;
     const size_t x = pos.col;
 
+    // создается текущая ячейка
+    std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(*this, text);
+    bool is_printable = IsNonEmptyCell(cell);
+
     if(y >= sheet_.size()) {
         // строки с таким индексом нет
         sheet_.resize(y + 1);
-        if (!text.empty()) {
+        if (is_printable) {
             print_area_.rows = y + 1;
         }
         sheet_.at(y).resize(x + 1);
-        if(!text.empty() && x >= print_area_.cols) {
+        if(is_printable && x >= print_area_.cols) {
             print_area_.cols = x + 1;
         }
     } else {
         // строка с таким индексом есть
         if(x >= sheet_.at(y).size()) {
             sheet_.at(y).resize(x + 1);
-            if(!text.empty() && x >= print_area_.cols) {
+            if(is_printable && x >= print_area_.cols) {
                 print_area_.cols = x + 1;
             }
         }
     }
-
-    // создается текущая ячейка
-    std::unique_ptr<CellInterface> cell = std::make_unique<Cell>(*this, text);
-    
-
     // если на текущий момент в ячейке [y, x] уже была ячейка, и там были записаны зависимые ячейки,
     // их нужно перенести во вновь созданную ячейку, чтобы сохранить
     if(GetCell(pos) != nullptr) {
@@ -66,8 +65,7 @@ void Sheet::SetCell(Position pos, std::string text) {
     CheckCycles(ref_cells, pos);
 
     // записать себя в список зависимых ячеек для всех ячеек,
-    // которые указаны в моем перечне  referenced_cells_
-
+    // которые указаны в моем перечне referenced_cells_
     for(Position referenced_cell : cell->GetReferencedCells()) {
         if(GetCell(referenced_cell) == nullptr) {
             // мы ссылаемся на пустую ячейку - создадим ее пустым текстом
@@ -180,7 +178,7 @@ void Sheet::ClearCell(Position pos) {
                 if (sheet_.at(y).size() == 0 && sheet_.size() != 0) {
                     // последняя строка пуста
                     sheet_.resize(sheet_.size() - 1);
-                    max_y_ = sheet_.size();
+                    print_area_.rows = sheet_.size();
                 }
             }
             // здесь нужна логика поиска последней ненулевой строки
@@ -193,7 +191,7 @@ void Sheet::ClearCell(Position pos) {
             to_be_remove = std::distance(sheet_.rbegin(), last_non_empty_row_it);
             if(to_be_remove != 0) {
                 sheet_.resize(sheet_.size() - to_be_remove);
-                max_y_ = sheet_.size();
+                print_area_.rows = sheet_.size();
             }
 
 
@@ -205,7 +203,7 @@ void Sheet::ClearCell(Position pos) {
                             new_max_x = v.size();
                         }
                     });
-                max_x_ = new_max_x;
+                print_area_.cols = new_max_x;
             }
         }
 
@@ -214,7 +212,7 @@ void Sheet::ClearCell(Position pos) {
         if(sheet_.at(y).size() == x + 1) {
             // просиходит удаление последнего элемента строки
             bool longest_row = false;
-            if (sheet_.at(y).size() == max_x_) {
+            if (sheet_.at(y).size() == print_area_.cols) {
                 longest_row = true;
                 // данная строка таблицы является (одной из) самых длинных
                 // необходим пересчет max_x_
@@ -224,8 +222,8 @@ void Sheet::ClearCell(Position pos) {
             // ищем первый не нулевой
             [[maybe_unused]] auto reverse_it = std::find_if(sheet_.at(y).rbegin(), 
                                                             sheet_.at(y).rend(),
-                    [](const std::unique_ptr<CellInterface>& it){
-                        return it != nullptr;
+                    [this](const std::unique_ptr<CellInterface>& it){
+                        return IsNonEmptyCell(it);
                     });
             // сколько пустых элементов в конце надо удалить
             size_t to_be_remove = std::distance(sheet_.at(y).rbegin(), reverse_it);
@@ -236,7 +234,7 @@ void Sheet::ClearCell(Position pos) {
                 if (sheet_.at(y).size() == 0 && sheet_.size() != 0) {
                     // последняя строка пуста
                     sheet_.resize(sheet_.size() - 1);
-                    max_y_ = sheet_.size();
+                    print_area_.cols = sheet_.size();
                 }
             }
             // здесь нужна логика поиска последней ненулевой строки
@@ -249,7 +247,7 @@ void Sheet::ClearCell(Position pos) {
             to_be_remove = std::distance(sheet_.rbegin(), last_non_empty_row_it);
             if(to_be_remove != 0) {
                 sheet_.resize(sheet_.size() - to_be_remove);
-                max_y_ = sheet_.size();
+                print_area_.rows = sheet_.size();
             }
 
 
@@ -261,19 +259,17 @@ void Sheet::ClearCell(Position pos) {
                             new_max_x = v.size();
                         }
                     });
-                max_x_ = new_max_x;
+                print_area_.cols = new_max_x;
             }
         } else {
             sheet_.at(y).at(x) = nullptr; // wrong
         }
 
     }
-
-
 }
 
 Size Sheet::GetPrintableSize() const {
-    return {(int)max_y_, (int)max_x_};
+    return print_area_;
 }
 
 void Sheet::PrintValues(std::ostream& output) const {
@@ -295,12 +291,12 @@ void Sheet::PrintValues(std::ostream& output) const {
 
         if(row.empty()) {
             // выведи max_x_ - 1 табуляций
-            for (size_t i = 0; i + 1 < max_x_; ++i) {
+            for (size_t i = 0; i + 1 < print_area_.cols; ++i) {
                 output << '\t';
             }
         } else {
             // выведи max_x_ - size() табуляций
-            for (size_t i = 0; i < (max_x_ - row.size()); ++i) {
+            for (size_t i = 0; i < (print_area_.cols - row.size()); ++i) {
                 output << '\t';
             }
         }
@@ -327,12 +323,12 @@ void Sheet::PrintTexts(std::ostream& output) const {
 
         if(row.empty()) {
             // выведи max_x_ - 1 табуляций
-            for (size_t i = 0; i + 1 < max_x_; ++i) {
+            for (size_t i = 0; i + 1 < print_area_.cols; ++i) {
                 output << '\t';
             }
         } else {
             // выведи max_x_ - size() табуляций
-            for (size_t i = 0; i < (max_x_ - row.size()); ++i) {
+            for (size_t i = 0; i < (print_area_.cols - row.size()); ++i) {
                 output << '\t';
             }
         }
