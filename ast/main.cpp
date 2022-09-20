@@ -404,30 +404,133 @@ namespace {
         sheet->SetCell("B1"_pos, "5");
         ASSERT_EQUAL(sheet->GetCell("B2"_pos)->GetValue(), CellInterface::Value(5.0));
     }
+    void Test1() {
+        auto sheet = CreateSheet();
+        sheet->SetCell("A1"_pos, "=(1+2)*3");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{1, 1}));
+        sheet->SetCell("B1"_pos, "=1+(2*3)");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{1, 2}));
+        sheet->SetCell("A2"_pos, "some");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{2, 2}));
+        sheet->SetCell("B2"_pos, "here");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{2, 2}));
+        sheet->SetCell("C2"_pos, "text");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{2, 3}));
+        sheet->SetCell("C3"_pos, "'and");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{3, 3}));
+        sheet->SetCell("D3"_pos, "'here");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{3, 4}));
+        sheet->SetCell("B6"_pos, "=1/0");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{6, 4}));
+
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+        sheet->ClearCell("B6"_pos);
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{3, 4}));
+        sheet->SetCell("F3"_pos, "'here");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{3, 6}));
+        sheet->ClearCell("F3"_pos);
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{3, 4}));
+        sheet->SetCell("H13"_pos, "'here");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{13, 8}));
+        sheet->ClearCell("H13"_pos);
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{3, 4}));
+        ASSERT(!(sheet->GetPrintableSize() == (Size{4, 6})));
+
+
+    }
+    void TestClearPrint() {
+            auto sheet = CreateSheet();
+            for (int i = 0; i <= 5; ++i) {
+                sheet->SetCell(Position{i, i}, std::to_string(i));
+            }
+
+            sheet->ClearCell(Position{3, 3});
+
+            for (int i = 5; i >= 0; --i) {
+                sheet->ClearCell(Position{i, i});
+                sheet->PrintValues(std::cout);
+                sheet->PrintTexts(std::cout);
+            }
+    }
+    void Test2() {
+        auto sheet = CreateSheet();
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{0, 0}));
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+
+        sheet->SetCell("A1"_pos, "=F1");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{1, 1}));
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+
+        sheet->SetCell("F1"_pos, "=H1/0");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{1, 6}));
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+
+        sheet->SetCell("B2"_pos, "=A1");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{2, 6}));
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+
+        sheet->ClearCell("F1"_pos);
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{2, 2}));
+
+        sheet->ClearCell("B2"_pos);
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{1, 1}));
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+
+        sheet->SetCell("C3"_pos, "=A1");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{3, 3}));
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+
+        sheet->ClearCell("C3"_pos);
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{1, 1}));
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+
+        sheet->SetCell("D4"_pos, "=C3");
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{4, 4}));
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+
+        sheet->ClearCell("D4"_pos);
+        ASSERT_EQUAL(sheet->GetPrintableSize(), (Size{1, 1}));
+        sheet->PrintValues(std::cout);
+        sheet->PrintTexts(std::cout);
+    }
 }  // namespace
 
 int main() {
     TestRunner tr;
-    RUN_TEST(tr, TestPositionAndStringConversion);
-    RUN_TEST(tr, TestPositionToStringInvalid);
-    RUN_TEST(tr, TestStringToPositionInvalid);
-    RUN_TEST(tr, TestEmpty);
-    RUN_TEST(tr, TestInvalidPosition);
-    RUN_TEST(tr, TestSetCellPlainText);
-    RUN_TEST(tr, TestClearCell);
-    RUN_TEST(tr, TestFormulaArithmetic);
-    RUN_TEST(tr, TestFormulaReferences);
-    RUN_TEST(tr, TestFormulaExpressionFormatting);
-    RUN_TEST(tr, TestFormulaReferencedCells);
-    RUN_TEST(tr, TestErrorValue);
-    RUN_TEST(tr, TestErrorDiv0);
-    RUN_TEST(tr, TestEmptyCellTreatedAsZero);
-    RUN_TEST(tr, TestFormulaInvalidPosition);
-    RUN_TEST(tr, TestPrint);
-    RUN_TEST(tr, TestCellReferences);
-    RUN_TEST(tr, TestFormulaIncorrect);
-    RUN_TEST(tr, TestCellCircularReferences);
-    RUN_TEST(tr, TestEditTable);
-    RUN_TEST(tr, TestCacheCorrect);
+    // RUN_TEST(tr, TestPositionAndStringConversion);
+    // RUN_TEST(tr, TestPositionToStringInvalid);
+    // RUN_TEST(tr, TestStringToPositionInvalid);
+    // RUN_TEST(tr, TestEmpty);
+    // RUN_TEST(tr, TestInvalidPosition);
+    // RUN_TEST(tr, TestSetCellPlainText);
+    // RUN_TEST(tr, TestClearCell);
+    // RUN_TEST(tr, TestFormulaArithmetic);
+    // RUN_TEST(tr, TestFormulaReferences);
+    // RUN_TEST(tr, TestFormulaExpressionFormatting);
+    // RUN_TEST(tr, TestFormulaReferencedCells);
+    // RUN_TEST(tr, TestErrorValue);
+    // RUN_TEST(tr, TestErrorDiv0);
+    // RUN_TEST(tr, TestEmptyCellTreatedAsZero);
+    // RUN_TEST(tr, TestFormulaInvalidPosition);
+    // RUN_TEST(tr, TestPrint);
+    // RUN_TEST(tr, TestCellReferences);
+    // RUN_TEST(tr, TestFormulaIncorrect);
+    // RUN_TEST(tr, TestCellCircularReferences);
+    // RUN_TEST(tr, TestEditTable);
+    // RUN_TEST(tr, TestCacheCorrect);
+    // RUN_TEST(tr, Test1);
+    // RUN_TEST(tr, TestClearPrint);
+    RUN_TEST(tr, Test2);
     return 0;
 }

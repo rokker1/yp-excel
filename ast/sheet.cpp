@@ -49,6 +49,11 @@ void Sheet::SetCell(Position pos, std::string text) {
                 rows_printable_size_[y] = x + 1;
             }
         }
+
+        if(is_printable && x >= rows_printable_size_[y]) {
+            print_area_.cols = x + 1;
+            rows_printable_size_[y] = x + 1;
+        }
     }
 
     // здесь для старой ячейки нужно пройтись по зависимым ячейкам и удалить ссылку на это ячейку
@@ -182,8 +187,9 @@ void Sheet::ClearCell(Position pos) {
             // ячейка печатная
             // нужен пересчет printable area
             if(sheet_.at(y).size() == x + 1) {
+
                 bool longest_row = false;
-                if (sheet_.at(y).size() == static_cast<size_t>(print_area_.cols)) {
+                if (x + 1 == static_cast<size_t>(print_area_.cols)) {
                     longest_row = true;
                     // данная строка таблицы является (одной из) самых длинных
                     // необходим пересчет max_x_
@@ -209,7 +215,7 @@ void Sheet::ClearCell(Position pos) {
                                 && last_printable_row > 0) {
                             --last_printable_row;
                         }
-                        print_area_.rows = last_printable_row;
+                        print_area_.rows = last_printable_row + 1;
                     }
                 }
 
@@ -259,6 +265,7 @@ void Sheet::ClearCell(Position pos) {
                 if (sheet_.at(y).size() == 0 && sheet_.size() != 0) {
                     // последняя строка пуста
                     sheet_.resize(sheet_.size() - 1);
+                    rows_printable_size_.resize(sheet_.size());
                     print_area_.rows = sheet_.size();
                 }
             }
@@ -274,16 +281,24 @@ void Sheet::ClearCell(Position pos) {
                 sheet_.resize(sheet_.size() - to_be_remove);
                 print_area_.rows = sheet_.size();
             }
+            // уменьшение числа строк в печатной области
+            size_t last_printable_row = rows_printable_size_.size() - 1;
+            while (rows_printable_size_[last_printable_row] == 0
+                    && last_printable_row > 0) {
+                --last_printable_row;
+            }
+            print_area_.rows = last_printable_row + 1;
 
 
             if(longest_row) {
                 size_t new_max_x = 0;
-                std::for_each(sheet_.begin(), sheet_.end(),
-                    [&new_max_x](const auto& v) {
-                        if(new_max_x < v.size()) {
-                            new_max_x = v.size();
-                        }
-                    });
+                std::for_each(rows_printable_size_.begin(),
+                rows_printable_size_.end(),
+                [&](const size_t n){
+                    if (n > new_max_x) {
+                        new_max_x = n;
+                    }
+                });
                 print_area_.cols = new_max_x;
             }
         } else {
@@ -309,9 +324,11 @@ void Sheet::PrintValues(std::ostream& output) const {
             auto cell = GetCell({row_index, x});
             if(cell != nullptr) {
                 auto value = cell->GetValue();
+                output << "{";
                 std::visit(CellValuePrinter{output}, value);
+                output << "}";
             } else {
-                output << "";
+                output << "{}";
             }
         }
 
@@ -327,8 +344,9 @@ void Sheet::PrintValues(std::ostream& output) const {
         //     }
         // }
 
-        output << '\n';
+        output << std::endl;
     }
+    output << std::endl;
 }
 void Sheet::PrintTexts(std::ostream& output) const {
     for(int row_index = 0; row_index < print_area_.rows; ++row_index) {
@@ -342,9 +360,9 @@ void Sheet::PrintTexts(std::ostream& output) const {
             auto cell = GetCell({row_index, x});
             if(cell != nullptr) {
                 auto value = cell->GetText();
-                output << value;
+                output << '{' << value << '}';
             } else {
-                output << "";
+                output << "{}";
             }
         }
 
@@ -362,6 +380,7 @@ void Sheet::PrintTexts(std::ostream& output) const {
 
         output << '\n';
     }
+    output << '\n';
 }
 
 std::unique_ptr<SheetInterface> CreateSheet() {
@@ -437,6 +456,7 @@ bool Sheet::IsNonEmptyCell(Position position) const {
         // nullptr вернет false
         return false;
     } else {
+        return !cell->GetText().empty();
         Cell::Value v = cell->GetValue();
         std::ostringstream os;
         std::visit(CellValuePrinter{os}, v);
@@ -448,10 +468,14 @@ bool Sheet::IsNonEmptyCell(const std::unique_ptr<CellInterface>& cell) const {
         // nullptr вернет false
         return false;
     } else {
+        /*
         Cell::Value v = cell->GetValue();
         std::ostringstream os;
         std::visit(CellValuePrinter{os}, v);
+        std::cout << os.str() << std::endl; // debug
         return !os.str().empty();
+        */
+       return !cell->GetText().empty();
     }
 }
 
