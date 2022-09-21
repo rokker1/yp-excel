@@ -186,15 +186,18 @@ void Sheet::ClearCell(Position pos) {
 
             // ячейка печатная
             // нужен пересчет printable area
-            if(sheet_.at(y).size() == x + 1) {
-
+            //if(sheet_.at(y).size() == x + 1) {
+            if (rows_printable_size_[y] == x + 1) { 
                 bool longest_row = false;
                 if (x + 1 == static_cast<size_t>(print_area_.cols)) {
                     longest_row = true;
                     // данная строка таблицы является (одной из) самых длинных
                     // необходим пересчет max_x_
                 }
-                // ищем первый не нулевой
+                // ищем первый не нулевой в строке с конца
+                last_nonempty_index = rows_printable_size_[y];
+                
+
                 [[maybe_unused]] auto reverse_it = std::find_if(sheet_.at(y).rbegin(), 
                                                                 sheet_.at(y).rend(),
                         [this](const std::unique_ptr<CellInterface>& it){
